@@ -1,6 +1,6 @@
-import Subcategory from '../models/subcategory.model.js'
-import { subcategoryValid } from '../validation/subcategory.validation.js'
-import Category from '../models/category.model.js'
+import Subcategory from '~/models/subcategory.model.js'
+import { subcategoryValid } from '~/validation/subcategory.validation.js'
+import Category from '~/models/category.model.js'
 
 export const getAllSubcategories = async (req, res) => {
   try {

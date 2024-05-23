@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import User from '../models/user.model.js'
-import { generateAccessToken, generateRefreshToken } from '../utils/generateToken.js'
-import { setTokenIntoCookie } from '../utils/utils.js'
+import User from '~/models/user.model.js'
+import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken.js'
+import { setTokenIntoCookie } from '~/utils/utils.js'
 
 export const loginSuccessService = async (userId, res) => {
   try {

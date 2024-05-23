@@ -1,6 +1,6 @@
-import Cart from '../models/cart.model.js'
-import Order from '../models/order.model.js'
-import Version from '../models/version.model.js'
+import Cart from '~/models/cart.model.js'
+import Order from '~/models/order.model.js'
+import Version from '~/models/version.model.js'
 
 export const createOrderCheckout = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
 import FacebookStrategy from 'passport-facebook'
-import User from '../../models/user.model.js'
+import User from '~/models/user.model.js'
 import passport from 'passport'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'

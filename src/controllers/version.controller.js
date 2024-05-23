@@ -1,7 +1,7 @@
 /* eslint-disable indent */
-import Product from '../models/product.model.js'
-import Version from '../models/version.model.js'
-import { versionValid } from '../validation/version.validation.js'
+import Product from '~/models/product.model.js'
+import Version from '~/models/version.model.js'
+import { versionValid } from '~/validation/version.validation.js'
 
 export const getAllVersions = async (req, res) => {
   try {

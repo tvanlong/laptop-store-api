@@ -1,6 +1,6 @@
-import Subcategory from '../models/subcategory.model.js'
-import Product from '../models/product.model.js'
-import { productValid } from '../validation/product.validation.js'
+import Subcategory from '~/models/subcategory.model.js'
+import Product from '~/models/product.model.js'
+import { productValid } from '~/validation/product.validation.js'
 
 export const getAllProducts = async (req, res) => {
   try {

@@ -7,9 +7,9 @@ import { connect } from 'mongoose'
 import dotenv from 'dotenv'
 import passport from 'passport'
 import session from 'express-session'
-import './configs/passport/google.passport.js'
-import './configs/passport/facebook.passport.js'
-import router from './routes/index.js'
+import '~/configs/passport/google.passport.js'
+import '~/configs/passport/facebook.passport.js'
+import router from '~/routes/index.js'
 
 const app = express()
 app.use(cookieParser())

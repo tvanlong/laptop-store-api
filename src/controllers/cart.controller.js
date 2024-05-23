@@ -1,7 +1,7 @@
 import { isValidObjectId } from 'mongoose'
-import Cart from '../models/cart.model.js'
-import User from '../models/user.model.js'
-import Version from '../models/version.model.js'
+import Cart from '~/models/cart.model.js'
+import User from '~/models/user.model.js'
+import { caculateTotalPrice, caculateTotalPriceAfterPopulate } from '~/utils/caculateTotalPrice'
 
 export const addItemToCart = async (req, res) => {
   try {
@@ -214,24 +214,4 @@ export const removeCart = async (req, res) => {
 
   await Cart.deleteOne({ userId: userId })
   res.status(200).json({ message: 'Xóa giỏ hàng thành công' })
-}
-
-const caculateTotalPriceAfterPopulate = async (cart) => {
-  let total_price = 0
-  cart.cart_items.forEach((item) => {
-    total_price += item.quantity * item.version.current_price
-  })
-  return total_price
-}
-
-const caculateTotalPrice = async (cart) => {
-  const versions = await Version.find({ _id: { $in: cart.cart_items.map((item) => item.version) } })
-  let total_price = 0
-
-  cart.cart_items.forEach((item) => {
-    let version = versions.find((p) => p._id == item.version.toString())
-    total_price += version.current_price * item.quantity
-  })
-
-  return total_price
 }

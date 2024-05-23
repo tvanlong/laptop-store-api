@@ -5,8 +5,8 @@ import {
   getAllCategories,
   getCategoryById,
   updateCategory
-} from '../controllers/category.controller.js'
-import { checkPermission } from '../middlewares/checkPermission.js'
+} from '~/controllers/category.controller.js'
+import { checkPermission } from '~/middlewares/checkPermission.js'
 
 const routerCategory = Router()
 

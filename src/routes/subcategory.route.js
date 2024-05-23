@@ -5,8 +5,8 @@ import {
   createSubcategory,
   updateSubcategory,
   deleteSubcategory
-} from '../controllers/subcategory.controller.js'
-import { checkPermission } from '../middlewares/checkPermission.js'
+} from '~/controllers/subcategory.controller.js'
+import { checkPermission } from '~/middlewares/checkPermission.js'
 
 const routerSubcategory = Router()
 

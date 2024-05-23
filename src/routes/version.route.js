@@ -7,8 +7,8 @@ import {
   getAllVersionsBySubcategory,
   getVersionById,
   updateVersion
-} from '../controllers/version.controller.js'
-import { checkPermission } from '../middlewares/checkPermission.js'
+} from '~/controllers/version.controller.js'
+import { checkPermission } from '~/middlewares/checkPermission.js'
 
 const routerVersion = Router()
 
