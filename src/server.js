@@ -15,6 +15,9 @@ import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 const app = express()
 app.use(cookieParser())
 
+// MemoryStore for session storage (prevents memory leaks)
+const MemoryStore = require('memorystore')(session)
+
 // Load environment variables
 dotenv.config()
 const { PORT, MONGO_ATLAS_URI, URL_CLIENT, URL_ADMIN } = process.env
@@ -34,6 +37,7 @@ app.use(
   session({
     secret: 'secret',
     resave: false,
+    store: new MemoryStore({ checkPeriod: 86400000 }),
     saveUninitialized: true,
     cookie: { secure: false } // Set to true if using HTTPS
   })
