@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-export const uploadImages = async (req, res) => {
+export const uploadImages = async (req, res, next) => {
   try {
     if (req.files.length <= 0) {
       return res.status(400).json({
@@ -14,10 +14,7 @@ export const uploadImages = async (req, res) => {
       files: images
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
@@ -33,7 +30,7 @@ export const getImage = async (req, res) => {
   }
 }
 
-export const deleteImage = async (req, res) => {
+export const deleteImage = async (req, res, next) => {
   try {
     const { filename } = req.params
     fs.unlinkSync(`./src/uploads/${filename}`)
@@ -41,9 +38,6 @@ export const deleteImage = async (req, res) => {
       message: 'Xóa ảnh thành công!'
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }

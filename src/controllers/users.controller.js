@@ -3,7 +3,7 @@ import User from '~/models/user.model.js'
 import { userValid } from '~/validation/user.validation.js'
 import bcryptjs from 'bcryptjs'
 
-export const getAllCustomers = async (req, res) => {
+export const getAllCustomers = async (req, res, next) => {
   try {
     const customers = await User.find({ role: 'member' })
     if (!customers || customers.length == 0) {
@@ -15,14 +15,11 @@ export const getAllCustomers = async (req, res) => {
       data: customers
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getAllStaffs = async (req, res) => {
+export const getAllStaffs = async (req, res, next) => {
   try {
     const staffs = await User.find({ role: 'admin' })
     if (!staffs || staffs.length == 0) {
@@ -34,14 +31,11 @@ export const getAllStaffs = async (req, res) => {
       data: staffs
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getStaff = async (req, res) => {
+export const getStaff = async (req, res, next) => {
   try {
     const { id } = req.params
     const staff = await User.findById(id)
@@ -54,14 +48,11 @@ export const getStaff = async (req, res) => {
       data: staff
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const createStaff = async (req, res) => {
+export const createStaff = async (req, res, next) => {
   try {
     const { error } = userValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -82,14 +73,11 @@ export const createStaff = async (req, res) => {
       data: userInfo
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const updateStaff = async (req, res) => {
+export const updateStaff = async (req, res, next) => {
   try {
     const { error } = userValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -144,14 +132,11 @@ export const updateStaff = async (req, res) => {
       data: userInfo
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const deleteStaff = async (req, res) => {
+export const deleteStaff = async (req, res, next) => {
   try {
     const { id } = req.params
     const staff = await User.findById(id)
@@ -161,9 +146,6 @@ export const deleteStaff = async (req, res) => {
     await User.findByIdAndDelete(id)
     return res.status(200).json({ message: 'Xóa nhân viên thành công' })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }

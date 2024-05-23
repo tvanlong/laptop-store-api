@@ -10,6 +10,7 @@ import session from 'express-session'
 import '~/configs/passport/google.passport.js'
 import '~/configs/passport/facebook.passport.js'
 import router from '~/routes/index.js'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 
 const app = express()
 app.use(cookieParser())
@@ -44,6 +45,9 @@ app.use(passport.session())
 
 // Routes
 app.use('/api', router)
+
+// Middleware xử lý lỗi tập trung
+app.use(errorHandlingMiddleware)
 
 // Error handler
 app.listen(PORT, () => {

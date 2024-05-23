@@ -1,7 +1,7 @@
 import Category from '~/models/category.model.js'
 import { categoryValid } from '~/validation/category.validation.js'
 
-export const getAllCategories = async (req, res) => {
+export const getAllCategories = async (req, res, next) => {
   try {
     const categories = await Category.find().populate('subcategories')
     if (!categories || categories.length == 0) {
@@ -13,14 +13,11 @@ export const getAllCategories = async (req, res) => {
       data: categories
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getCategoryById = async (req, res) => {
+export const getCategoryById = async (req, res, next) => {
   try {
     const { id } = req.params
     const category = await Category.findById(id)
@@ -33,14 +30,11 @@ export const getCategoryById = async (req, res) => {
       data: category
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const createCategory = async (req, res) => {
+export const createCategory = async (req, res, next) => {
   try {
     const { error } = categoryValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -64,14 +58,11 @@ export const createCategory = async (req, res) => {
       data: category
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const updateCategory = async (req, res) => {
+export const updateCategory = async (req, res, next) => {
   try {
     const { error } = categoryValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -96,14 +87,11 @@ export const updateCategory = async (req, res) => {
       data: category
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const deleteCategory = async (req, res) => {
+export const deleteCategory = async (req, res, next) => {
   try {
     const category = await Category.findByIdAndDelete(req.params.id)
     if (!category) {
@@ -112,9 +100,6 @@ export const deleteCategory = async (req, res) => {
 
     return res.status(200).json({ message: 'Xóa danh mục thành công' })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }

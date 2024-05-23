@@ -1,8 +1,8 @@
 import Cart from '~/models/cart.model.js'
 import Order from '~/models/order.model.js'
-import Version from '~/models/version.model.js'
+import { caculateTotalPrice } from '~/utils/caculateTotalPrice'
 
-export const createOrderCheckout = async (req, res) => {
+export const createOrderCheckout = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ userId: req.params.userId })
     if (!cart) return res.status(404).json({ message: 'Không tìm thấy giỏ hàng' })
@@ -26,14 +26,11 @@ export const createOrderCheckout = async (req, res) => {
       data: order
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getOrderById = async (req, res) => {
+export const getOrderById = async (req, res, next) => {
   try {
     const order = await Order.findOne({ user: req.params.userId, _id: req.params.orderId }).populate({
       path: 'user',
@@ -46,14 +43,11 @@ export const getOrderById = async (req, res) => {
       data: order
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getOrdersByUserId = async (req, res) => {
+export const getOrdersByUserId = async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.params.userId })
     if (!orders) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
@@ -63,14 +57,11 @@ export const getOrdersByUserId = async (req, res) => {
       data: orders
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getAllOrders = async (req, res) => {
+export const getAllOrders = async (req, res, next) => {
   try {
     const orders = await Order.find()
       .populate({
@@ -90,14 +81,11 @@ export const getAllOrders = async (req, res) => {
       data: orders
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const updateStatusOrder = async (req, res) => {
+export const updateStatusOrder = async (req, res, next) => {
   try {
     const order = await Order.findOne({ user: req.params.userId, _id: req.params.orderId })
     if (!order) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
@@ -110,21 +98,6 @@ export const updateStatusOrder = async (req, res) => {
       data: order
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
-}
-
-const caculateTotalPrice = async (cart) => {
-  const versions = await Version.find({ _id: { $in: cart.cart_items.map((item) => item.version) } })
-  let total_price = 0
-
-  cart.cart_items.forEach((item) => {
-    let version = versions.find((p) => p._id == item.version.toString())
-    total_price += version.current_price * item.quantity
-  })
-
-  return total_price
 }

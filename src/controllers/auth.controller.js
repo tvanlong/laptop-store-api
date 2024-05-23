@@ -11,7 +11,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export const signUp = async (req, res) => {
+export const signUp = async (req, res, next) => {
   try {
     // 1. Validate dữ liệu nguời dùng
     const { error } = signUpValid.validate(req.body, { abortEarly: false })
@@ -35,11 +35,11 @@ export const signUp = async (req, res) => {
 
     return res.status(200).json({ message: 'Vui lòng kiểm tra email của bạn để xác nhận tài khoản!' })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-export const verifyEmail = async (req, res) => {
+export const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.params
 
@@ -63,11 +63,11 @@ export const verifyEmail = async (req, res) => {
       })
     })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-export const signIn = async (req, res) => {
+export const signIn = async (req, res, next) => {
   try {
     // 1. Validate dữ liệu nguời dùng
     const { error } = signInValid.validate(req.body, { abortEarly: false })
@@ -109,11 +109,11 @@ export const signIn = async (req, res) => {
       refresh_token: 'Bearer ' + refreshToken
     })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-export const signOut = async (req, res) => {
+export const signOut = async (req, res, next) => {
   try {
     const token = req.cookies.access_token
     if (!token) {
@@ -126,11 +126,11 @@ export const signOut = async (req, res) => {
 
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-export const refreshToken = async (req, res) => {
+export const refreshToken = async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refresh_token
     if (!refreshToken) {
@@ -154,19 +154,19 @@ export const refreshToken = async (req, res) => {
       })
     })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-export const loginSuccess = async (req, res) => {
+export const loginSuccess = async (req, res, next) => {
   try {
     const { userId } = req.body
     if (!userId) {
       return res.status(400).json({ message: 'Không tìm thấy userId' })
     }
-    const response = await loginSuccessService(userId, res)
+    const response = await loginSuccessService(userId, res, next)
     return res.status(200).json(response)
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }

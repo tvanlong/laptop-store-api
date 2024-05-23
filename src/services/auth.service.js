@@ -3,7 +3,7 @@ import User from '~/models/user.model.js'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken.js'
 import { setTokenIntoCookie } from '~/utils/utils.js'
 
-export const loginSuccessService = async (userId, res) => {
+export const loginSuccessService = async (userId, res, next) => {
   try {
     const userExists = await User.findOne({ _id: userId })
     const payload = { _id: userExists._id, email: userExists.email, role: userExists.role }
@@ -18,6 +18,6 @@ export const loginSuccessService = async (userId, res) => {
       refresh_token: 'Bearer ' + refreshToken
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }

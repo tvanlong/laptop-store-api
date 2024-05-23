@@ -2,7 +2,7 @@ import Subcategory from '~/models/subcategory.model.js'
 import Product from '~/models/product.model.js'
 import { productValid } from '~/validation/product.validation.js'
 
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res, next) => {
   try {
     const { page, limit, sort, order, search } = req.query
     const options = {
@@ -37,14 +37,11 @@ export const getAllProducts = async (req, res) => {
       data: products
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getProductById = async (req, res) => {
+export const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params
     const product = await Product.findById(id)
@@ -61,14 +58,11 @@ export const getProductById = async (req, res) => {
       data: product
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
   try {
     const { error } = productValid.validate(req.body)
     if (error) {
@@ -101,14 +95,11 @@ export const createProduct = async (req, res) => {
       data: product
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params
     const { error } = productValid.validate(req.body, { abortEarly: false })
@@ -152,14 +143,11 @@ export const updateProduct = async (req, res) => {
       data: updatedProduct
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id)
     if (!product) {
@@ -168,9 +156,6 @@ export const deleteProduct = async (req, res) => {
 
     return res.status(200).json({ message: 'Xóa sản phẩm thành công' })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }

@@ -3,7 +3,7 @@ import Product from '~/models/product.model.js'
 import Version from '~/models/version.model.js'
 import { versionValid } from '~/validation/version.validation.js'
 
-export const getAllVersions = async (req, res) => {
+export const getAllVersions = async (req, res, next) => {
   try {
     const { page, limit, sort, order, search, price_range, ram, memory, screen, cpu, vga } = req.query
     const options = {
@@ -44,14 +44,11 @@ export const getAllVersions = async (req, res) => {
       data: versions
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getAllVersionsByCategory = async (req, res) => {
+export const getAllVersionsByCategory = async (req, res, next) => {
   try {
     const { category } = req.params
     const { page, limit, sort, order, price_range, ram, memory, screen, cpu, vga } = req.query
@@ -100,14 +97,11 @@ export const getAllVersionsByCategory = async (req, res) => {
       data: versionsByCategory
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getAllVersionsBySubcategory = async (req, res) => {
+export const getAllVersionsBySubcategory = async (req, res, next) => {
   try {
     const { subcategory } = req.params
     const { page, limit, sort, order, price_range, ram, memory, screen, cpu, vga } = req.query
@@ -153,14 +147,11 @@ export const getAllVersionsBySubcategory = async (req, res) => {
       data: versionsBySubcategory
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const getVersionById = async (req, res) => {
+export const getVersionById = async (req, res, next) => {
   try {
     const version = await Version.findById(req.params.id).populate({
       path: 'product',
@@ -179,14 +170,11 @@ export const getVersionById = async (req, res) => {
       data: version
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const createVersion = async (req, res) => {
+export const createVersion = async (req, res, next) => {
   try {
     const existedVersion = await Version.findOne({ name: req.body.name })
     if (existedVersion) {
@@ -218,14 +206,11 @@ export const createVersion = async (req, res) => {
       data: version
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const updateVersion = async (req, res) => {
+export const updateVersion = async (req, res, next) => {
   try {
     const { error } = versionValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -265,14 +250,11 @@ export const updateVersion = async (req, res) => {
       data: updatedVersion
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
-export const deleteVersion = async (req, res) => {
+export const deleteVersion = async (req, res, next) => {
   try {
     const version = await Version.findById(req.params.id)
     if (!version) {
@@ -294,10 +276,7 @@ export const deleteVersion = async (req, res) => {
       data: deletedVersion
     })
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message
-    })
+    next(error)
   }
 }
 
