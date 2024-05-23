@@ -1,0 +1,172 @@
+/* eslint-disable no-unused-vars */
+import User from '../models/user.model.js'
+import { signInValid, signUpValid } from '../validation/user.validation.js'
+import bcryptjs from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+import { generateAccessToken, generateRefreshToken } from '../utils/generateToken.js'
+import { clearCookie, setTokenIntoCookie } from '../utils/utils.js'
+import { loginSuccessService } from '../services/auth.service.js'
+import { sendEmail } from '../utils/email.js'
+
+dotenv.config()
+
+export const signUp = async (req, res) => {
+  try {
+    // 1. Validate dữ liệu nguời dùng
+    const { error } = signUpValid.validate(req.body, { abortEarly: false })
+    if (error) {
+      const errors = error.details.map((item) => item.message)
+      return res.status(400).json({ errors })
+    }
+
+    // 2. Kiểm tra xem email đã tồn tại chưa
+    const { email } = req.body
+    const userExists = await User.findOne({ email })
+    if (userExists) {
+      return res.status(400).json({ message: 'Email đã tồn tại!' })
+    }
+
+    // 3. Gửi email xác nhận tài khoản
+    const userData = { ...req.body, role: 'member' }
+    const token = jwt.sign(userData, process.env.JWT_ACCOUNT_VERIFY, { expiresIn: '10m' })
+    const message = `Vui lòng xác nhận email của bạn bằng cách nhấn vào đường link sau: ${process.env.URL_CLIENT}/register-success/${token}`
+    await sendEmail(email, 'Xác nhận tài khoản', message)
+
+    return res.status(200).json({ message: 'Vui lòng kiểm tra email của bạn để xác nhận tài khoản!' })
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params
+
+    if (!token) {
+      return res.status(400).json({ message: 'Token không hợp lệ!' })
+    }
+
+    jwt.verify(token, process.env.JWT_ACCOUNT_VERIFY, async (error, user) => {
+      if (error) {
+        return res.status(403).json({ message: 'Token không hợp lệ!' })
+      }
+      const hashedPassword = await bcryptjs.hash(user.password, 10)
+      const newUser = await User.create({
+        ...user,
+        password: hashedPassword
+      })
+      const { password, ...userInfo } = newUser._doc
+      return res.status(201).json({
+        message: 'Đăng ký thành công!',
+        data: userInfo
+      })
+    })
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+export const signIn = async (req, res) => {
+  try {
+    // 1. Validate dữ liệu nguời dùng
+    const { error } = signInValid.validate(req.body, { abortEarly: false })
+    if (error) {
+      const errors = error.details.map((item) => item.message)
+      return res.status(400).json({ errors })
+    }
+
+    // 2. Kiểm tra xem email đã tồn tại chưa
+    const { email } = req.body
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res.status(404).json({ message: 'Email không tồn tại!' })
+    }
+
+    // 3. Tìm người dùng theo email và kiểm tra mật khẩu
+    const isMatch = await bcryptjs.compare(req.body.password, user.password)
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Mật khẩu không chính xác!' })
+    }
+
+    // 4. Tạo JWT
+    const payload = { _id: user._id, email: user.email, role: user.role }
+    const accessToken = generateAccessToken(payload)
+    const refreshToken = generateRefreshToken(payload)
+
+    // 5. Gửi token trong cookie
+    setTokenIntoCookie(res, accessToken, refreshToken)
+
+    const userJSON = JSON.stringify(user)
+    res.cookie('user', userJSON, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 }) // Thời gian sống: 7 ngày
+
+    // 6. Trả về thông tin người dùng đã đăng nhập và token
+    const { password, ...userInfo } = user._doc
+    return res.status(200).json({
+      message: 'Đăng nhập thành công!',
+      data: { ...userInfo },
+      access_token: 'Bearer ' + accessToken,
+      refresh_token: 'Bearer ' + refreshToken
+    })
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+export const signOut = async (req, res) => {
+  try {
+    const token = req.cookies.access_token
+    if (!token) {
+      return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
+    }
+
+    await User.findOneAndDelete({ token }).exec()
+
+    clearCookie(res)
+
+    return res.status(200).json({ message: 'Đăng xuất thành công!' })
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refresh_token
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
+    }
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (error, user) => {
+      if (error) {
+        return res.status(403).json({ message: 'Token không hợp lệ!' })
+      }
+
+      const payload = { _id: user._id, email: user.email, role: user.role }
+      const newAccessToken = generateAccessToken(payload)
+      const newRefreshToken = generateRefreshToken(payload)
+      setTokenIntoCookie(res, newAccessToken, newRefreshToken)
+
+      return res.status(200).json({
+        message: 'Làm mới token thành công!',
+        access_token: 'Bearer ' + newAccessToken,
+        refresh_token: 'Bearer ' + newRefreshToken
+      })
+    })
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+export const loginSuccess = async (req, res) => {
+  try {
+    const { userId } = req.body
+    if (!userId) {
+      return res.status(400).json({ message: 'Không tìm thấy userId' })
+    }
+    const response = await loginSuccessService(userId, res)
+    return res.status(200).json(response)
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
