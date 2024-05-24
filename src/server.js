@@ -29,7 +29,8 @@ connect(MONGO_ATLAS_URI)
 // Middleware
 app.use(helmet())
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
-app.use(cors(corsOptions))
+app.use(cors(corsOptions)) // Enable CORS
+app.options('*', cors(corsOptions)) // Enable pre-flight
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
