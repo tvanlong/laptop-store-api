@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { uploadStorage } from '~/middlewares/uploadStorage.js'
-import { deleteImage, getImage, uploadImages } from '~/controllers/images.controller.js'
+import { uploadStorage } from '~/middlewares/uploadStorage'
+import { deleteImage, getImage, uploadImages } from '~/controllers/images.controller'
 
 const routerImages = Router()
 

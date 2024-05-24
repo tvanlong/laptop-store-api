@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import passport from 'passport'
-import { signUp, signIn, signOut, refreshToken, loginSuccess, verifyEmail } from '~/controllers/auth.controller.js'
+import { signUp, signIn, signOut, refreshToken, loginSuccess, verifyEmail } from '~/controllers/auth.controller'
 
 const routerAuth = Router()
 const { URL_CLIENT, URL_CLIENT_DEPLOY } = process.env

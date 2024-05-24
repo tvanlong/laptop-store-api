@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { checkPermission } from '~/middlewares/checkPermission.js'
+import { checkPermission } from '~/middlewares/checkPermission'
 import {
   createStaff,
   deleteStaff,
@@ -7,7 +7,7 @@ import {
   getAllStaffs,
   getStaff,
   updateStaff
-} from '~/controllers/users.controller.js'
+} from '~/controllers/users.controller'
 
 const routerUser = Router()
 

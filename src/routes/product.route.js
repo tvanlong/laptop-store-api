@@ -5,8 +5,8 @@ import {
   createProduct,
   updateProduct,
   deleteProduct
-} from '~/controllers/product.controller.js'
-import { checkPermission } from '~/middlewares/checkPermission.js'
+} from '~/controllers/product.controller'
+import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerProduct = Router()
 

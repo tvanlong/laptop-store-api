@@ -1,4 +1,4 @@
-import Version from '~/models/version.model.js'
+import Version from '~/models/version.model'
 
 export const caculateTotalPriceAfterPopulate = async (cart) => {
   let total_price = 0

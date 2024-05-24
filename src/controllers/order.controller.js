@@ -1,5 +1,5 @@
-import Cart from '~/models/cart.model.js'
-import Order from '~/models/order.model.js'
+import Cart from '~/models/cart.model'
+import Order from '~/models/order.model'
 import { caculateTotalPrice } from '~/utils/caculateTotalPrice'
 
 export const createOrderCheckout = async (req, res, next) => {

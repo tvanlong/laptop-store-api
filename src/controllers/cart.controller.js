@@ -1,6 +1,6 @@
 import { isValidObjectId } from 'mongoose'
-import Cart from '~/models/cart.model.js'
-import User from '~/models/user.model.js'
+import Cart from '~/models/cart.model'
+import User from '~/models/user.model'
 import { caculateTotalPrice, caculateTotalPriceAfterPopulate } from '~/utils/caculateTotalPrice'
 
 export const addItemToCart = async (req, res, next) => {

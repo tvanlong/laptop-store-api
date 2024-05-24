@@ -1,13 +1,13 @@
 import { Router } from 'express'
-import routerProduct from './product.route.js'
-import routerAuth from './auth.route.js'
-import routerSubcategory from './subcategory.route.js'
-import routerCategory from './category.route.js'
-import routerImages from './upload.route.js'
-import routerVersion from './version.route.js'
-import routerCart from './cart.route.js'
-import routerOrder from './order.route.js'
-import routerUser from './user.route.js'
+import routerProduct from './product.route'
+import routerAuth from './auth.route'
+import routerSubcategory from './subcategory.route'
+import routerCategory from './category.route'
+import routerImages from './upload.route'
+import routerVersion from './version.route'
+import routerCart from './cart.route'
+import routerOrder from './order.route'
+import routerUser from './user.route'
 
 const router = Router()
 

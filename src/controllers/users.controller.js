@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import User from '~/models/user.model.js'
-import { userValid } from '~/validation/user.validation.js'
+import User from '~/models/user.model'
+import { userValid } from '~/validation/user.validation'
 import bcryptjs from 'bcryptjs'
 
 export const getAllCustomers = async (req, res, next) => {

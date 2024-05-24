@@ -1,12 +1,12 @@
 import { Router } from 'express'
-import { checkPermission } from '~/middlewares/checkPermission.js'
+import { checkPermission } from '~/middlewares/checkPermission'
 import {
   createOrderCheckout,
   getAllOrders,
   getOrderById,
   getOrdersByUserId,
   updateStatusOrder
-} from '~/controllers/order.controller.js'
+} from '~/controllers/order.controller'
 
 const routerOrder = Router()
 
