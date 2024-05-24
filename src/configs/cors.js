@@ -27,23 +27,8 @@ export const corsOptions = {
     return callback(new Error('Not allowed by CORS'))
   },
 
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'device-remember-token',
-    'Access-Control-Allow-Origin',
-    'Access-Control-Allow-Methods',
-    'Access-Control-Request-Headers',
-    'Origin',
-    'Accept'
-  ],
-
   // Some legacy browsers (IE11, various SmartTVs) choke on 204
   optionsSuccessStatus: 200,
-
-  // Cho phép gửi request OPTIONS trước khi gửi request thực sự
-  preflightContinue: true,
 
   // CORS sẽ cho phép nhận cookies từ request
   credentials: true
