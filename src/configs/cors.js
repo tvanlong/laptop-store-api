@@ -2,23 +2,17 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const WHITELIST_DOMAINS = [
-  process.env.URL_CLIENT,
-  process.env.URL_ADMIN,
-  process.env.URL_CLIENT_DEPLOY,
-  process.env.URL_ADMIN_DEPLOY
-]
+const WHITELIST_DOMAINS = [process.env.URL_CLIENT_DEPLOY, process.env.URL_ADMIN_DEPLOY]
 
 // Cấu hình CORS Option
 export const corsOptions = {
   origin: function (origin, callback) {
-    // Cho phép việc gọi API bằng POSTMAN trên môi trường dev,
-    // Thông thường khi sử dụng postman thì cái origin sẽ có giá trị là undefined
-    if (!origin && process.env.BUILD_MODE === 'dev') {
+    // Nếu đang ở trong môi trường dev thì cho phép tất cả các domain
+    if (process.env.BUILD_MODE === 'dev') {
       return callback(null, true)
     }
 
-    // Kiểm tra dem origin có phải là domain được chấp nhận hay không
+    // Kiểm tra xem origin có phải là domain được chấp nhận hay không
     if (WHITELIST_DOMAINS.includes(origin)) {
       return callback(null, true)
     }
