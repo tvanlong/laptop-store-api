@@ -22,10 +22,18 @@ export const getAllVersions = async (req, res, next) => {
 
     const filter = {}
     // Lấy danh sách ID sản phẩm dựa trên từ khóa tìm kiếm
-    const productIds = await getProductIds(search)
-    if (productIds.length > 0) {
-      filter['product'] = { $in: productIds }
+    if (search) {
+      const productIds = await getProductIds(search)
+      if (productIds.length > 0) {
+        filter['product'] = { $in: productIds }
+      } else if (productIds.length === 0) {
+        return res.status(200).json({
+          message: 'Không tìm thấy sản phẩm nào!',
+          data: []
+        })
+      }
     }
+
     // Áp dụng bộ lọc giá
     applyPriceRangeFilter(filter, price_range)
     // Áp dụng bộ lọc regex theo cấu hình
