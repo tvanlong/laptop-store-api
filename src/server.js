@@ -21,15 +21,14 @@ const MemoryStore = require('memorystore')(session)
 
 // Load environment variables
 dotenv.config()
-const { APP_PORT, MONGO_ATLAS_URI, URL_CLIENT, URL_ADMIN } = process.env
-
+const { APP_PORT, MONGO_ATLAS_URI, URL_CLIENT, URL_ADMIN, URL_CLIENT_DEPLOY, URL_ADMIN_DEPLOY } = process.env
 // Connect to MongoDB
 connect(MONGO_ATLAS_URI)
 
 // Middleware
 app.use(helmet())
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
-app.use(cors({ origin: [URL_ADMIN, URL_CLIENT], credentials: true }))
+app.use(cors({ origin: [URL_ADMIN, URL_CLIENT, URL_CLIENT_DEPLOY, URL_ADMIN_DEPLOY], credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

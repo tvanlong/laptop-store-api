@@ -3,7 +3,7 @@ import passport from 'passport'
 import { signUp, signIn, signOut, refreshToken, loginSuccess, verifyEmail } from '~/controllers/auth.controller.js'
 
 const routerAuth = Router()
-const { URL_CLIENT } = process.env
+const { URL_CLIENT, URL_CLIENT_DEPLOY } = process.env
 
 routerAuth.post('/signup', signUp)
 routerAuth.post('/signin', signIn)
@@ -20,7 +20,7 @@ routerAuth.get(
   })
 )
 routerAuth.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-  res.redirect(`${URL_CLIENT}/login-success/${req.user._id}`)
+  res.redirect(`${process.env.BUILD_MODE === 'prod' ? URL_CLIENT_DEPLOY : URL_CLIENT}/login-success/${req.user._id}`)
 })
 
 // =========================================== Facebook OAuth 2.0 ===============================================
@@ -32,7 +32,7 @@ routerAuth.get(
 )
 
 routerAuth.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }), (req, res) => {
-  res.redirect(`${URL_CLIENT}/login-success/${req.user._id}`)
+  res.redirect(`${process.env.BUILD_MODE === 'prod' ? URL_CLIENT_DEPLOY : URL_CLIENT}/login-success/${req.user._id}`)
 })
 // =============================================================================================================
 

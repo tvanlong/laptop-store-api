@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 
 // Load environment variables
 dotenv.config()
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_API_DEPLOY } = process.env
 const DEFAULT_PASSWORD = '123123123'
 const DEFAULT_PHONE = '0384823130'
 
@@ -16,7 +16,10 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/api/auth/google/callback'
+      callbackURL:
+        process.env.BUILD_MODE === 'prod'
+          ? `${URL_API_DEPLOY}/api/auth/google/callback`
+          : 'http://localhost:3000/api/auth/google/callback'
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

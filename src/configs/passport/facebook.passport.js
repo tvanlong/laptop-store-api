@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 
 // Load environment variables
 dotenv.config()
-const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env
+const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, URL_API_DEPLOY } = process.env
 const DEFAULT_PASSWORD = '123123123'
 const DEFAULT_PHONE = '0384823130'
 
@@ -16,7 +16,10 @@ passport.use(
     {
       clientID: FACEBOOK_APP_ID,
       clientSecret: FACEBOOK_APP_SECRET,
-      callbackURL: 'http://localhost:3000/api/auth/facebook/callback',
+      callbackURL:
+        process.env.BUILD_MODE === 'prod'
+          ? `${URL_API_DEPLOY}/api/auth/facebook/callback`
+          : 'http://localhost:3000/api/auth/facebook/callback',
       profileFields: ['id', 'displayName', 'email']
     },
     async (accessToken, refreshToken, profile, done) => {
