@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -20,7 +21,7 @@ const MemoryStore = require('memorystore')(session)
 
 // Load environment variables
 dotenv.config()
-const { PORT, MONGO_ATLAS_URI, URL_CLIENT, URL_ADMIN } = process.env
+const { APP_PORT, MONGO_ATLAS_URI, URL_CLIENT, URL_ADMIN } = process.env
 
 // Connect to MongoDB
 connect(MONGO_ATLAS_URI)
@@ -54,7 +55,14 @@ app.use('/api', router)
 app.use(errorHandlingMiddleware)
 
 // Error handler
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(chalk.greenBright(`Server is running at http://localhost:${PORT}`))
-})
+if (process.env.BUILD_MODE === 'prod') {
+  // Production environment
+  app.listen(process.env.PORT, () => {
+    console.log(chalk.greenBright(`Production: Server is running at Port:${process.env.PORT}`))
+  })
+} else {
+  // Development environment
+  app.listen(APP_PORT, () => {
+    console.log(chalk.greenBright(`Local Dev: Server is running at http://localhost:${APP_PORT}`))
+  })
+}

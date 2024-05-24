@@ -68,7 +68,7 @@ Setting up the environment variables is crucial for the application to run succe
 
 ```bash
 # Environment variables
-PORT = 3000
+APP_PORT = 3000
 URL_CLIENT = 'http://localhost:5173'
 URL_ADMIN = 'http://localhost:3001'
 
