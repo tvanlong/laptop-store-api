@@ -12,6 +12,7 @@ import '~/configs/passport/google.passport.js'
 import '~/configs/passport/facebook.passport.js'
 import router from '~/routes/index.js'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
+import { corsOptions } from '~/configs/cors'
 
 const app = express()
 app.use(cookieParser())
@@ -21,14 +22,14 @@ const MemoryStore = require('memorystore')(session)
 
 // Load environment variables
 dotenv.config()
-const { APP_PORT, MONGO_ATLAS_URI, URL_CLIENT, URL_ADMIN, URL_CLIENT_DEPLOY, URL_ADMIN_DEPLOY } = process.env
+const { APP_PORT, MONGO_ATLAS_URI } = process.env
 // Connect to MongoDB
 connect(MONGO_ATLAS_URI)
 
 // Middleware
 app.use(helmet())
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
-app.use(cors({ origin: [URL_ADMIN, URL_CLIENT, URL_CLIENT_DEPLOY, URL_ADMIN_DEPLOY], credentials: true }))
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
