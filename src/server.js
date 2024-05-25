@@ -33,7 +33,6 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
 app.use(cors(corsOptions)) // Enable CORS
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/api/upload', express.static(path.join(__dirname, 'uploads')))
 
 // Session middleware: Required for OAuth 2.0
 app.use(
@@ -52,6 +51,7 @@ app.use(passport.session())
 
 // Routes
 app.use('/api', router)
+app.use('/api/upload', express.static(path.join(__dirname, 'uploads')))
 
 // Middleware xử lý lỗi tập trung
 app.use(errorHandlingMiddleware)
