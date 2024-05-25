@@ -100,6 +100,8 @@ export const signIn = async (req, res, next) => {
     const userJSON = JSON.stringify(user)
     res.cookie('user', userJSON, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 }) // Thời gian sống: 7 ngày
 
+    console.log('Headers: ', req.headers)
+
     // 6. Trả về thông tin người dùng đã đăng nhập và token
     const { password, ...userInfo } = user._doc
     return res.status(200).json({
@@ -116,6 +118,7 @@ export const signIn = async (req, res, next) => {
 export const signOut = async (req, res, next) => {
   try {
     const token = req.cookies.access_token
+    console.log('Token: ', token)
     if (!token) {
       return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
     }
