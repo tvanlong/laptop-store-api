@@ -41,7 +41,7 @@ app.use(
     resave: false,
     store: new MemoryStore({ checkPeriod: 86400000 }),
     saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: { secure: process.env.BUILD_MODE === 'prod' ? true : false } // Set to true if using HTTPS
   })
 )
 
