@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import express from 'express'
 import cors from 'cors'
-import path from 'path'
 import cookieParser from 'cookie-parser'
 import chalk from 'chalk'
 import helmet from 'helmet'
@@ -14,6 +13,7 @@ import '~/configs/passport/facebook.passport'
 import router from '~/routes'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { corsOptions } from '~/configs/cors'
+const path = require('node:path')
 
 const app = express()
 app.use(cookieParser())
