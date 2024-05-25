@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import express from 'express'
 import cors from 'cors'
+import path from 'path'
 import cookieParser from 'cookie-parser'
 import chalk from 'chalk'
 import helmet from 'helmet'
@@ -32,6 +33,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
 app.use(cors(corsOptions)) // Enable CORS
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use('/api/upload', express.static(path.join(__dirname, 'uploads')))
 
 // Session middleware: Required for OAuth 2.0
 app.use(
