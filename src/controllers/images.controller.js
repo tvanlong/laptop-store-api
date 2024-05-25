@@ -1,4 +1,5 @@
 import fs from 'fs'
+const path = require('node:path')
 
 export const uploadImages = async (req, res, next) => {
   try {
@@ -21,7 +22,7 @@ export const uploadImages = async (req, res, next) => {
 export const getImage = async (req, res) => {
   try {
     const { filename } = req.params
-    return res.status(200).sendFile(filename, { root: './src/uploads/' })
+    return res.status(200).sendFile(filename, { root: path.join(__dirname, '../uploads') })
   } catch (error) {
     return res.status(500).json({
       name: error.name,
@@ -33,7 +34,7 @@ export const getImage = async (req, res) => {
 export const deleteImage = async (req, res, next) => {
   try {
     const { filename } = req.params
-    fs.unlinkSync(`./src/uploads/${filename}`)
+    fs.unlinkSync(path.join(__dirname, '../uploads', filename))
     return res.status(200).json({
       message: 'Xóa ảnh thành công!'
     })
