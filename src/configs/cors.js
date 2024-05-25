@@ -7,6 +7,7 @@ const WHITELIST_DOMAINS = [process.env.URL_CLIENT_DEPLOY, process.env.URL_ADMIN_
 // Cấu hình CORS Option
 export const corsOptions = {
   origin: function (origin, callback) {
+    console.log('origin: ', origin)
     // Nếu đang ở trong môi trường dev thì cho phép tất cả các domain
     if (process.env.BUILD_MODE === 'dev') {
       return callback(null, true)
