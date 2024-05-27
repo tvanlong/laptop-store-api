@@ -49,7 +49,12 @@ export const getOrderById = async (req, res, next) => {
 
 export const getOrdersByUserId = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.params.userId })
+    const orders = await Order.find({ user: req.params.userId }).populate({
+      path: 'items.version',
+      populate: {
+        path: 'product'
+      }
+    })
     if (!orders) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
 
     return res.status(200).json({
