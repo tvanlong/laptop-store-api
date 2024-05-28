@@ -2,7 +2,7 @@
 import User from '~/models/user.model'
 import { signInValid, signUpValid } from '~/validation/user.validation'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
-import { clearCookie, setTokenIntoCookie } from '~/utils/utils'
+import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
 import { loginSuccessService } from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
 import bcryptjs from 'bcryptjs'
@@ -97,9 +97,6 @@ export const signIn = async (req, res, next) => {
     // 5. Gửi token trong cookie
     setTokenIntoCookie(res, accessToken, refreshToken, user)
 
-    const userJSON = JSON.stringify(user)
-    res.cookie('user', userJSON, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 }) // Thời gian sống: 7 ngày
-
     // 6. Trả về thông tin người dùng đã đăng nhập và token
     const { password, ...userInfo } = user._doc
     return res.status(200).json({
@@ -113,17 +110,18 @@ export const signIn = async (req, res, next) => {
   }
 }
 
-export const signOut = async (req, res, next) => {
+export const signOutAdmin = async (req, res, next) => {
   try {
-    const token = req.cookies.access_token
-    if (!token) {
-      return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
-    }
+    clearCookieAdmin(res)
+    return res.status(200).json({ message: 'Đăng xuất thành công!' })
+  } catch (error) {
+    next(error)
+  }
+}
 
-    await User.findOneAndDelete({ token }).exec()
-
-    clearCookie(res)
-
+export const signOutMember = async (req, res, next) => {
+  try {
+    clearCookieMember(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
     next(error)

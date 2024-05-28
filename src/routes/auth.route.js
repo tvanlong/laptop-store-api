@@ -1,13 +1,23 @@
 import { Router } from 'express'
 import passport from 'passport'
-import { signUp, signIn, signOut, refreshToken, loginSuccess, verifyEmail } from '~/controllers/auth.controller'
+import {
+  signUp,
+  signIn,
+  refreshToken,
+  loginSuccess,
+  verifyEmail,
+  signOutAdmin,
+  signOutMember
+} from '~/controllers/auth.controller'
+import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerAuth = Router()
 const { URL_CLIENT, URL_CLIENT_DEPLOY } = process.env
 
 routerAuth.post('/signup', signUp)
 routerAuth.post('/signin', signIn)
-routerAuth.post('/signout', signOut)
+routerAuth.post('/signout-admin', checkPermission('admin'), signOutAdmin)
+routerAuth.post('/signout-member', checkPermission('member'), signOutMember)
 routerAuth.post('/verify/:token', verifyEmail)
 routerAuth.post('/refresh-token', refreshToken)
 routerAuth.post('/signin-success', loginSuccess)
