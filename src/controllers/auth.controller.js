@@ -2,7 +2,7 @@
 import User from '~/models/user.model'
 import { signInValid, signUpValid } from '~/validation/user.validation'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
-import { clearCookie, setTokenIntoCookie } from '~/utils/utils'
+import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
 import { loginSuccessService } from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
 import bcryptjs from 'bcryptjs'
@@ -95,10 +95,7 @@ export const signIn = async (req, res, next) => {
     const refreshToken = generateRefreshToken(payload)
 
     // 5. Gửi token trong cookie
-    setTokenIntoCookie(res, accessToken, refreshToken)
-
-    const userJSON = JSON.stringify(user)
-    res.cookie('user', userJSON, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 }) // Thời gian sống: 7 ngày
+    setTokenIntoCookie(res, accessToken, refreshToken, user)
 
     // 6. Trả về thông tin người dùng đã đăng nhập và token
     const { password, ...userInfo } = user._doc
@@ -113,17 +110,18 @@ export const signIn = async (req, res, next) => {
   }
 }
 
-export const signOut = async (req, res, next) => {
+export const signOutAdmin = async (req, res, next) => {
   try {
-    const token = req.cookies.access_token
-    if (!token) {
-      return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
-    }
+    clearCookieAdmin(res)
+    return res.status(200).json({ message: 'Đăng xuất thành công!' })
+  } catch (error) {
+    next(error)
+  }
+}
 
-    await User.findOneAndDelete({ token }).exec()
-
-    clearCookie(res)
-
+export const signOutMember = async (req, res, next) => {
+  try {
+    clearCookieMember(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
     next(error)
@@ -145,8 +143,7 @@ export const refreshToken = async (req, res, next) => {
       const payload = { _id: user._id, email: user.email, role: user.role }
       const newAccessToken = generateAccessToken(payload)
       const newRefreshToken = generateRefreshToken(payload)
-
-      setTokenIntoCookie(res, newAccessToken, newRefreshToken)
+      setTokenIntoCookie(res, newAccessToken, newRefreshToken, user)
 
       return res.status(200).json({
         message: 'Làm mới token thành công!',
