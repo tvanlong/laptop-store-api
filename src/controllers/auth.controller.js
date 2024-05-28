@@ -30,7 +30,9 @@ export const signUp = async (req, res, next) => {
     // 3. Gửi email xác nhận tài khoản
     const userData = { ...req.body, role: 'member' }
     const token = jwt.sign(userData, process.env.JWT_ACCOUNT_VERIFY, { expiresIn: '10m' })
-    const message = `Vui lòng xác nhận email của bạn bằng cách nhấn vào đường link sau: ${process.env.URL_CLIENT}/register-success/${token}`
+    const message = `Vui lòng xác nhận email của bạn bằng cách nhấn vào đường link sau: ${
+      process.env.BUILD_MODE === 'prod' ? process.env.URL_CLIENT_DEPLOY : process.env.URL_CLIENT
+    }/register-success/${token}`
     await sendEmail(email, 'Xác nhận tài khoản', message)
 
     return res.status(200).json({ message: 'Vui lòng kiểm tra email của bạn để xác nhận tài khoản!' })
