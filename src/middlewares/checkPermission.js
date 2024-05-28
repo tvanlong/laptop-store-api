@@ -10,8 +10,10 @@ export const checkPermission = (...roles) => {
       let token
       if (roles.includes('admin') && req.cookies.access_token_admin) {
         token = req.cookies.access_token_admin
+        console.log(token)
       } else if (roles.includes('member') && req.cookies.access_token_member) {
         token = req.cookies.access_token_member
+        console.log(token)
       }
 
       // Kiểm tra token có hợp lệ không
