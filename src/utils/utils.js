@@ -16,9 +16,11 @@ export const setTokenIntoCookie = (res, accessToken, refreshToken, user) => {
   }
 
   if (user.role === 'admin') {
+    console.log('In setTokenIntoCookie: ', user.role)
     res.cookie('access_token_admin', accessToken, cookieOptions)
     res.cookie('refresh_token_admin', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
   } else if (user.role === 'member') {
+    console.log('In setTokenIntoCookie: ', user.role)
     res.cookie('access_token_member', accessToken, cookieOptions)
     res.cookie('refresh_token_member', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
   }
