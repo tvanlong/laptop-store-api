@@ -3,6 +3,8 @@ dotenv.config()
 
 export const setTokenIntoCookie = (res, accessToken, refreshToken, user) => {
   const isProd = process.env.BUILD_MODE === 'prod'
+  console.log('process.env.BUILD_MODE: ', process.env.BUILD_MODE)
+  console.log('isProd: ', isProd)
   const cookieOptions = {
     httpOnly: isProd,
     maxAge: 7 * 24 * 60 * 60 * 1000
