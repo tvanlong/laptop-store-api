@@ -54,19 +54,11 @@ export const setTokenIntoCookie = (res, accessToken, refreshToken, user) => {
 }
 
 export const clearCookieAdmin = (res) => {
-  const cookiesToClear = ['access_token_admin', 'refresh_token_admin']
-  cookiesToClear.forEach((cookie) => {
-    if (res.cookie[cookie]) {
-      res.clearCookie(cookie)
-    }
-  })
+  res.clearCookie('access_token_admin')
+  res.clearCookie('refresh_token_admin')
 }
 
 export const clearCookieMember = (res) => {
-  const cookiesToClear = ['access_token_member', 'refresh_token_member']
-  cookiesToClear.forEach((cookie) => {
-    if (res.cookie[cookie]) {
-      res.clearCookie(cookie)
-    }
-  })
+  res.clearCookie('access_token_member')
+  res.clearCookie('refresh_token_member')
 }
