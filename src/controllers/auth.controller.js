@@ -95,7 +95,7 @@ export const signIn = async (req, res, next) => {
     const refreshToken = generateRefreshToken(payload)
 
     // 5. Gửi token trong cookie
-    setTokenIntoCookie(res, accessToken, refreshToken)
+    setTokenIntoCookie(res, accessToken, refreshToken, user)
 
     const userJSON = JSON.stringify(user)
     res.cookie('user', userJSON, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 }) // Thời gian sống: 7 ngày

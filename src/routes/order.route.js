@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import { checkPermission } from '~/middlewares/checkPermission'
 import {
   createOrderCheckout,
   getAllOrders,
@@ -14,6 +13,6 @@ routerOrder.get('/', getAllOrders)
 routerOrder.post('/:userId', createOrderCheckout)
 routerOrder.get('/:userId', getOrdersByUserId)
 routerOrder.get('/:userId/:orderId', getOrderById)
-routerOrder.patch('/:userId/:orderId', checkPermission('admin', 'member'), updateStatusOrder)
+routerOrder.patch('/:userId/:orderId', updateStatusOrder)
 
 export default routerOrder

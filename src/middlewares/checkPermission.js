@@ -7,7 +7,12 @@ dotenv.config()
 export const checkPermission = (...roles) => {
   return async (req, res, next) => {
     try {
-      const token = req.cookies.access_token
+      let token
+      if (roles.includes('admin') && req.cookies.access_token_admin) {
+        token = req.cookies.access_token_admin
+      } else if (roles.includes('member') && req.cookies.access_token_member) {
+        token = req.cookies.access_token_member
+      }
 
       // Kiểm tra token có hợp lệ không
       if (!token) {

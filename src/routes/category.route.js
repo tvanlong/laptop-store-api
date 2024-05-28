@@ -12,8 +12,8 @@ const routerCategory = Router()
 
 routerCategory.get('/', getAllCategories)
 routerCategory.get('/:id', getCategoryById)
-routerCategory.post('/', checkPermission('admin', 'member'), createCategory)
-routerCategory.put('/:id', checkPermission('admin', 'member'), updateCategory)
-routerCategory.delete('/:id', checkPermission('admin', 'member'), deleteCategory)
+routerCategory.post('/', checkPermission('admin'), createCategory)
+routerCategory.put('/:id', checkPermission('admin'), updateCategory)
+routerCategory.delete('/:id', checkPermission('admin'), deleteCategory)
 
 export default routerCategory

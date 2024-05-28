@@ -8,15 +8,16 @@ import {
   removeItem,
   updateCartQuantity
 } from '~/controllers/cart.controller'
+import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerCart = Router()
 
-routerCart.get('/:userId', getCart)
-routerCart.post('/:userId', addItemToCart)
-routerCart.patch('/:userId', updateCartQuantity)
-routerCart.patch('/:userId/increase', increaseQuantity)
-routerCart.patch('/:userId/decrease', decreaseQuantity)
-routerCart.delete('/:userId', removeItem)
-routerCart.delete('/:userId/all', removeCart)
+routerCart.get('/:userId', checkPermission('member'), getCart)
+routerCart.post('/:userId', checkPermission('member'), addItemToCart)
+routerCart.patch('/:userId', checkPermission('member'), updateCartQuantity)
+routerCart.patch('/:userId/increase', checkPermission('member'), increaseQuantity)
+routerCart.patch('/:userId/decrease', checkPermission('member'), decreaseQuantity)
+routerCart.delete('/:userId', checkPermission('member'), removeItem)
+routerCart.delete('/:userId/all', checkPermission('member'), removeCart)
 
 export default routerCart
