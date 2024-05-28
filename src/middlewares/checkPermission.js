@@ -8,10 +8,10 @@ export const checkPermission = (...roles) => {
   return async (req, res, next) => {
     try {
       let token
-      if (roles.includes('admin') && req.cookies.access_token_admin) {
+      if (roles.includes('admin')) {
         token = req.cookies.access_token_admin
         console.log('token-admin: ', token)
-      } else if (roles.includes('member') && req.cookies.access_token_member) {
+      } else if (roles.includes('member')) {
         token = req.cookies.access_token_member
         console.log('token-member: ', token)
       }
