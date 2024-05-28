@@ -143,7 +143,7 @@ export const refreshToken = async (req, res, next) => {
       const payload = { _id: user._id, email: user.email, role: user.role }
       const newAccessToken = generateAccessToken(payload)
       const newRefreshToken = generateRefreshToken(payload)
-      setTokenIntoCookie(res, newAccessToken, newRefreshToken)
+      setTokenIntoCookie(res, newAccessToken, newRefreshToken, user)
 
       return res.status(200).json({
         message: 'Làm mới token thành công!',
