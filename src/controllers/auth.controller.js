@@ -2,7 +2,13 @@
 import User from '~/models/user.model'
 import { signInValid, signUpValid } from '~/validation/user.validation'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
-import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
+import {
+  clearCookieAdmin,
+  clearCookieMember,
+  setTokenAdminIntoCookie,
+  setTokenIntoCookie,
+  setTokenMemberIntoCookie
+} from '~/utils/utils'
 import { loginSuccessService } from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
 import bcryptjs from 'bcryptjs'
@@ -95,7 +101,12 @@ export const signIn = async (req, res, next) => {
     const refreshToken = generateRefreshToken(payload)
 
     // 5. Gửi token trong cookie
-    setTokenIntoCookie(res, accessToken, refreshToken, user)
+    // setTokenIntoCookie(res, accessToken, refreshToken, user)
+    if (user.role === 'admin') {
+      setTokenAdminIntoCookie(res, accessToken, refreshToken)
+    } else {
+      setTokenMemberIntoCookie(res, accessToken, refreshToken)
+    }
 
     // 6. Trả về thông tin người dùng đã đăng nhập và token
     const { password, ...userInfo } = user._doc
@@ -143,7 +154,11 @@ export const refreshToken = async (req, res, next) => {
       const payload = { _id: user._id, email: user.email, role: user.role }
       const newAccessToken = generateAccessToken(payload)
       const newRefreshToken = generateRefreshToken(payload)
-      setTokenIntoCookie(res, newAccessToken, newRefreshToken, user)
+      if (user.role === 'admin') {
+        setTokenAdminIntoCookie(res, newAccessToken, newRefreshToken)
+      } else {
+        setTokenMemberIntoCookie(res, newAccessToken, newRefreshToken)
+      }
 
       return res.status(200).json({
         message: 'Làm mới token thành công!',
