@@ -15,15 +15,20 @@ export const setTokenIntoCookie = (res, accessToken, refreshToken, user) => {
     cookieOptions.sameSite = 'none'
   }
 
+  console.log('cookieOptions: ', cookieOptions)
+
   if (user.role === 'admin') {
     console.log('In setTokenIntoCookie: ', user.role)
     res.cookie('access_token_admin', accessToken, cookieOptions)
     res.cookie('refresh_token_admin', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
+    console.log('Cookies set for admin', { accessToken, refreshToken })
   } else if (user.role === 'member') {
     console.log('In setTokenIntoCookie: ', user.role)
     res.cookie('access_token_member', accessToken, cookieOptions)
     res.cookie('refresh_token_member', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
+    console.log('Cookies set for member', { accessToken, refreshToken })
   }
+  console.log('Response headers: ', res.getHeaders())
 }
 
 export const clearCookieAdmin = (res) => {

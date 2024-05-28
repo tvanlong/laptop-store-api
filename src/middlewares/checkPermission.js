@@ -7,6 +7,7 @@ dotenv.config()
 export const checkPermission = (...roles) => {
   return async (req, res, next) => {
     try {
+      console.log('Request cookies: ', req.cookies)
       let token = req.cookies.access_token_admin || req.cookies.access_token_member
       console.log('token-admin: ', req.cookies.access_token_admin)
       console.log('token-member: ', req.cookies.access_token_member)
