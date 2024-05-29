@@ -13,7 +13,6 @@ import '~/configs/passport/facebook.passport'
 import router from '~/routes'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { corsOptions } from '~/configs/cors'
-const path = require('node:path')
 
 const app = express()
 app.use(cookieParser())
@@ -31,6 +30,7 @@ connect(MONGO_ATLAS_URI)
 app.use(helmet())
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
 app.use(cors(corsOptions)) // Enable CORS
+app.use(express.static('uploads')) // Serve static files;
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -51,7 +51,6 @@ app.use(passport.session())
 
 // Routes
 app.use('/api', router)
-app.use('/api/upload', express.static(path.join(__dirname, 'uploads')))
 
 // Middleware xử lý lỗi tập trung
 app.use(errorHandlingMiddleware)
