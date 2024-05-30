@@ -4,7 +4,7 @@ import { productValid } from '~/validation/product.validation'
 
 export const getAllProducts = async (req, res, next) => {
   try {
-    const { page, limit, sort, order, search } = req.query
+    const { page, limit, sort, order, keyword } = req.query
     const options = {
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 10,
@@ -21,7 +21,7 @@ export const getAllProducts = async (req, res, next) => {
       }
     }
 
-    const filter = search ? { name: { $regex: search, $options: 'i' } } : {}
+    const filter = keyword ? { name: { $regex: keyword, $options: 'i' } } : {}
 
     const products = await Product.paginate(filter, { ...options, sort: sortQuery })
 
