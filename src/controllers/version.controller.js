@@ -5,7 +5,7 @@ import { versionValid } from '~/validation/version.validation'
 
 export const getAllVersions = async (req, res, next) => {
   try {
-    const { page, limit, sort, order, search, price_range, ram, memory, screen, cpu, vga } = req.query
+    const { page, limit, sort, order, search, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
     const options = {
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 10,
@@ -35,7 +35,7 @@ export const getAllVersions = async (req, res, next) => {
     }
 
     // Áp dụng bộ lọc giá
-    applyPriceRangeFilter(filter, price_range)
+    applyPriceRangeFilter(filter, price_min, price_max)
     // Áp dụng bộ lọc regex theo cấu hình
     applyRegexFilters(filter, ram, memory, screen, cpu, vga)
 
@@ -59,7 +59,7 @@ export const getAllVersions = async (req, res, next) => {
 export const getAllVersionsByCategory = async (req, res, next) => {
   try {
     const { category } = req.params
-    const { page, limit, sort, order, price_range, ram, memory, screen, cpu, vga } = req.query
+    const { page, limit, sort, order, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
     const versions = await Version.find().populate({
       path: 'product',
       populate: {
@@ -85,7 +85,7 @@ export const getAllVersionsByCategory = async (req, res, next) => {
 
     const filter = {}
     // Áp dụng bộ lọc giá
-    applyPriceRangeFilter(filter, price_range)
+    applyPriceRangeFilter(filter, price_min, price_max)
     // Áp dụng bộ lọc regex theo cấu hình
     applyRegexFilters(filter, ram, memory, screen, cpu, vga)
 
@@ -112,7 +112,7 @@ export const getAllVersionsByCategory = async (req, res, next) => {
 export const getAllVersionsBySubcategory = async (req, res, next) => {
   try {
     const { subcategory } = req.params
-    const { page, limit, sort, order, price_range, ram, memory, screen, cpu, vga } = req.query
+    const { page, limit, sort, order, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
     const versions = await Version.find().populate({
       path: 'product',
       match: { subcategory }
@@ -135,7 +135,7 @@ export const getAllVersionsBySubcategory = async (req, res, next) => {
 
     const filter = {}
     // Áp dụng bộ lọc giá
-    applyPriceRangeFilter(filter, price_range)
+    applyPriceRangeFilter(filter, price_min, price_max)
     // Áp dụng bộ lọc regex theo cấu hình
     applyRegexFilters(filter, ram, memory, screen, cpu, vga)
 
@@ -313,30 +313,13 @@ const getProductIds = async (search) => {
 }
 
 // Lọc sản phẩm theo khoảng giá
-const applyPriceRangeFilter = (filter, price_range) => {
-  if (price_range) {
-    switch (price_range) {
-      case 'under10':
-        filter['current_price'] = { $lt: 10000000 }
-        break
-      case '10to20':
-        filter['current_price'] = { $gte: 10000000, $lte: 20000000 }
-        break
-      case '20to40':
-        filter['current_price'] = { $gte: 20000000, $lte: 40000000 }
-        break
-      case '40to60':
-        filter['current_price'] = { $gte: 40000000, $lte: 60000000 }
-        break
-      case '60to80':
-        filter['current_price'] = { $gte: 60000000, $lte: 80000000 }
-        break
-      case 'above80':
-        filter['current_price'] = { $gte: 80000000 }
-        break
-      default:
-        break
-    }
+const applyPriceRangeFilter = (filter, price_min, price_max) => {
+  if (price_min !== undefined && price_max !== undefined) {
+    filter['current_price'] = { $gte: parseInt(price_min), $lte: parseInt(price_max) }
+  } else if (price_min !== undefined && price_max === undefined) {
+    filter['current_price'] = { $gte: parseInt(price_min) }
+  } else if (price_min === undefined && price_max !== undefined) {
+    filter['current_price'] = { $lte: parseInt(price_max) }
   }
 }
 
