@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { uploadStorage } from '~/middlewares/uploadStorage'
-import { deleteImage, getImage, uploadImages } from '~/controllers/images.controller'
+import { deleteImage, uploadImages } from '~/controllers/images.controller'
 
 const routerImages = Router()
 
 routerImages.post('/', uploadStorage.array('files'), uploadImages)
-routerImages.get('/:filename', getImage)
-routerImages.delete('/:filename', deleteImage)
+routerImages.delete('/:public_id', deleteImage)
 
 export default routerImages
