@@ -70,7 +70,12 @@ export const createProduct = async (req, res, next) => {
       return res.status(400).json({ errors })
     }
 
-    const existedProduct = await Product.findOne({ name: req.body.name })
+    // Chuẩn hóa tên sản phẩm trước khi kiểm tra
+    const normalizedProductName = req.body.name.toLowerCase()
+    // Kiểm tra sự tồn tại của sản phẩm (bao gồm cả viết hoa và viết thường)
+    const existedProduct = await Product.findOne({
+      name: { $regex: new RegExp('^' + normalizedProductName + '$', 'i') }
+    })
     if (existedProduct) return res.status(400).json({ message: 'Sản phẩm này đã tồn tại!' })
 
     const product = await Product.create(req.body)
