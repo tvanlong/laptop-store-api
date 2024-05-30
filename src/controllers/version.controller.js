@@ -5,7 +5,7 @@ import { versionValid } from '~/validation/version.validation'
 
 export const getAllVersions = async (req, res, next) => {
   try {
-    const { page, limit, sort, order, search, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
+    const { page, limit, sort, order, keyword, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
     const options = {
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 10,
@@ -22,8 +22,8 @@ export const getAllVersions = async (req, res, next) => {
 
     const filter = {}
     // Lấy danh sách ID sản phẩm dựa trên từ khóa tìm kiếm
-    if (search) {
-      const productIds = await getProductIds(search)
+    if (keyword) {
+      const productIds = await getProductIds(keyword)
       if (productIds.length > 0) {
         filter['product'] = { $in: productIds }
       } else if (productIds.length === 0) {
@@ -302,11 +302,11 @@ const getSortOptions = (sort, order) => {
 }
 
 // Lấy danh sách ID sản phẩm dựa trên từ khóa tìm kiếm
-const getProductIds = async (search) => {
-  if (!search) return []
+const getProductIds = async (keyword) => {
+  if (!keyword) return []
 
   const products = await Product.find({
-    name: { $regex: search, $options: 'i' }
+    name: { $regex: keyword, $options: 'i' }
   }).select('_id')
 
   return products.map((product) => product._id)
