@@ -21,7 +21,7 @@ export const corsOptions = {
     return callback(new Error('Not allowed by CORS'))
   },
 
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   preflightContinue: false,
 
   // Some legacy browsers (IE11, various SmartTVs) choke on 204

@@ -19,9 +19,10 @@ passport.use(
       callbackURL:
         process.env.BUILD_MODE === 'prod'
           ? `${URL_API_DEPLOY}/api/auth/google/callback`
-          : 'http://localhost:3000/api/auth/google/callback'
+          : 'http://localhost:3000/api/auth/google/callback',
+      passReqToCallback: true
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (request, accessToken, refreshToken, profile, done) => {
       try {
         const existingUser = await User.findOne({ email: profile.emails[0].value })
         if (existingUser) {
