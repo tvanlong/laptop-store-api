@@ -2,6 +2,7 @@
 import User from '~/models/user.model'
 import { changePasswordValid, profileCustomerValid, userValid } from '~/validation/user.validation'
 import bcryptjs from 'bcryptjs'
+import { DEFAULT_AVATAR } from '~/constants/defaultVariables'
 
 export const getAllCustomers = async (req, res, next) => {
   try {
@@ -83,7 +84,7 @@ export const createStaff = async (req, res, next) => {
     }
 
     const hashedPassword = await bcryptjs.hash(req.body.password, 10)
-    const staff = await User.create({ ...req.body, password: hashedPassword, role: 'admin' })
+    const staff = await User.create({ ...req.body, password: hashedPassword, role: 'admin', avatar: DEFAULT_AVATAR })
     const { password, ...userInfo } = staff._doc
     return res.status(201).json({
       message: 'Tạo nhân viên mới thành công',

@@ -1,6 +1,7 @@
 // import fs from 'fs'
 // const path = require('node:path')
 import cloudinary from '~/configs/cloudinary'
+import User from '~/models/user.model'
 
 export const uploadImages = async (req, res, next) => {
   try {
@@ -45,6 +46,34 @@ export const deleteImage = async (req, res, next) => {
       }
       return res.status(200).json({
         message: 'Xóa ảnh thành công!'
+      })
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const uploadAvatar = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const user = await User.findById(id)
+    if (!user) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' })
+    }
+
+    cloudinary.uploader.upload(req.file.path, async (error, result) => {
+      if (error) {
+        return res.status(400).json({
+          message: 'Tải ảnh lên thất bại!'
+        })
+      }
+
+      user.avatar = result.secure_url
+      await user.save()
+
+      return res.status(200).json({
+        message: 'Tải ảnh lên thành công!',
+        avatar: result.secure_url
       })
     })
   } catch (error) {

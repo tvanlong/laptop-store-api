@@ -8,6 +8,7 @@ import { sendEmail } from '~/utils/email'
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { DEFAULT_AVATAR, DEFAULT_ROLE } from '~/constants/defaultVariables'
 
 dotenv.config()
 
@@ -28,7 +29,7 @@ export const signUp = async (req, res, next) => {
     }
 
     // 3. Gửi email xác nhận tài khoản
-    const userData = { ...req.body, role: 'member' }
+    const userData = { ...req.body, role: DEFAULT_ROLE }
     const token = jwt.sign(userData, process.env.JWT_ACCOUNT_VERIFY, { expiresIn: '10m' })
     const message = `Vui lòng xác nhận email của bạn bằng cách nhấn vào đường link sau: ${
       process.env.BUILD_MODE === 'prod' ? process.env.URL_CLIENT_DEPLOY : process.env.URL_CLIENT
@@ -56,6 +57,7 @@ export const verifyEmail = async (req, res, next) => {
       const hashedPassword = await bcryptjs.hash(user.password, 10)
       const newUser = await User.create({
         ...user,
+        avatar: DEFAULT_AVATAR,
         password: hashedPassword
       })
       const { password, ...userInfo } = newUser._doc
