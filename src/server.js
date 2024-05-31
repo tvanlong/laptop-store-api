@@ -30,7 +30,6 @@ connect(MONGO_ATLAS_URI)
 app.use(helmet())
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
 app.use(cors(corsOptions)) // Enable CORS
-app.use(express.static('uploads')) // Serve static files;
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
