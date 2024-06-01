@@ -13,12 +13,16 @@ export const setTokenIntoCookie = (res, accessToken, refreshToken, user) => {
     cookieOptions.sameSite = 'none'
   }
 
+  let cookieName = ''
   if (user.role === 'admin') {
-    res.cookie('access_token_admin', accessToken, cookieOptions)
-    res.cookie('refresh_token_admin', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
+    cookieName = 'access_token_admin'
   } else if (user.role === 'member') {
-    res.cookie('access_token_member', accessToken, cookieOptions)
-    res.cookie('refresh_token_member', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
+    cookieName = 'access_token_member'
+  }
+
+  if (cookieName) {
+    res.cookie(cookieName, accessToken, cookieOptions)
+    res.cookie('refresh_token', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
   }
 }
 
