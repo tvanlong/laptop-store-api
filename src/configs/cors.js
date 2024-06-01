@@ -19,6 +19,10 @@ export const corsOptions = {
       return callback(null, true)
     }
 
+    if (!origin && checkReferer(origin)) {
+      return callback(null, true)
+    }
+
     // Cuối cùng nếu domain không được chấp nhận thì trả về lỗi
     return callback(new Error())
   },
@@ -31,4 +35,19 @@ export const corsOptions = {
 
   // CORS sẽ cho phép nhận cookies từ request
   credentials: true
+}
+
+// Hàm kiểm tra Referer
+function checkReferer(referer) {
+  if (referer) {
+    // Kiểm tra xem Referer có chứa một trong các domain được chấp nhận hay không
+    for (const domain of WHITELIST_DOMAINS) {
+      if (referer.includes(domain)) {
+        return true
+      }
+    }
+  }
+
+  // Trả về false nếu không phát hiện được domain trong Referer
+  return false
 }
