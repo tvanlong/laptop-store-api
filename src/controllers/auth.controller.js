@@ -134,7 +134,15 @@ export const signOutMember = async (req, res, next) => {
 
 export const refreshToken = async (req, res, next) => {
   try {
-    const refreshToken = req.cookies.refresh_token
+    let refreshToken
+    // Kiểm tra domain của yêu cầu
+    const origin = req.headers.origin || req.headers.referer
+    if (origin === process.env.URL_CLIENT || origin === process.env.URL_CLIENT_DEPLOY) {
+      refreshToken = req.cookies.refresh_token_member
+    } else if (origin === process.env.URL_ADMIN || origin === process.env.URL_ADMIN_DEPLOY) {
+      refreshToken = req.cookies.refresh_token_admin
+    }
+
     if (!refreshToken) {
       return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
     }
