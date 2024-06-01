@@ -7,6 +7,7 @@ const WHITELIST_DOMAINS = [process.env.URL_CLIENT_DEPLOY, process.env.URL_ADMIN_
 // Cấu hình CORS Option
 export const corsOptions = {
   origin: function (origin, callback) {
+    // eslint-disable-next-line no-console
     console.log(`Origin: ${origin}`) // Debugging line
 
     // Nếu đang ở trong môi trường dev thì cho phép tất cả các domain
@@ -16,6 +17,11 @@ export const corsOptions = {
 
     // Kiểm tra xem origin có phải là domain được chấp nhận hay không
     if (WHITELIST_DOMAINS.includes(origin)) {
+      return callback(null, true)
+    }
+
+    // Pass qua nếu không có origin (request từ OAuth2.0)
+    if (origin === undefined) {
       return callback(null, true)
     }
 

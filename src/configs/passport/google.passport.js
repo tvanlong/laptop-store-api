@@ -3,6 +3,7 @@ import User from '~/models/user.model'
 import passport from 'passport'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
+import { DEFAULT_ROLE } from '~/constants/defaultVariables'
 
 // Load environment variables
 dotenv.config()
@@ -33,7 +34,9 @@ passport.use(
             email: profile.emails[0].value,
             name: `${profile.name.familyName} ${profile.name.givenName}`,
             phone: DEFAULT_PHONE,
-            password: hashedPassword
+            password: hashedPassword,
+            role: DEFAULT_ROLE,
+            avatar: profile.photos[0].value
           })
           const savedUser = await newUser.save()
           done(null, savedUser)
