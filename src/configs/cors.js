@@ -15,12 +15,12 @@ export const corsOptions = {
     }
 
     // Kiểm tra xem origin có phải là domain được chấp nhận hay không
-    if (WHITELIST_DOMAINS.includes(origin) || origin === undefined) {
+    if (WHITELIST_DOMAINS.includes(origin)) {
       return callback(null, true)
     }
 
     // Cuối cùng nếu domain không được chấp nhận thì trả về lỗi
-    return callback(new Error())
+    return callback(new Error('Not allowed by CORS'))
   },
 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

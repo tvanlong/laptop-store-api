@@ -174,7 +174,7 @@ export const loginSuccess = async (req, res, next) => {
     if (!userId) {
       return res.status(400).json({ message: 'Không tìm thấy userId' })
     }
-    const response = await loginSuccessService(userId, res)
+    const response = await loginSuccessService(userId, res, next)
     return res.status(200).json(response)
   } catch (error) {
     next(error)
