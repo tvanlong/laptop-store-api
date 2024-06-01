@@ -15,11 +15,7 @@ export const corsOptions = {
     }
 
     // Kiểm tra xem origin có phải là domain được chấp nhận hay không
-    if (WHITELIST_DOMAINS.includes(origin)) {
-      return callback(null, true)
-    }
-
-    if (!origin && checkReferer(origin)) {
+    if (WHITELIST_DOMAINS.includes(origin) || origin === undefined) {
       return callback(null, true)
     }
 
@@ -35,19 +31,4 @@ export const corsOptions = {
 
   // CORS sẽ cho phép nhận cookies từ request
   credentials: true
-}
-
-// Hàm kiểm tra Referer
-function checkReferer(referer) {
-  if (referer) {
-    // Kiểm tra xem Referer có chứa một trong các domain được chấp nhận hay không
-    for (const domain of WHITELIST_DOMAINS) {
-      if (referer.includes(domain)) {
-        return true
-      }
-    }
-  }
-
-  // Trả về false nếu không phát hiện được domain trong Referer
-  return false
 }
