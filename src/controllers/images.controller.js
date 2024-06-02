@@ -1,5 +1,3 @@
-// import fs from 'fs'
-// const path = require('node:path')
 import cloudinary from '~/configs/cloudinary'
 import User from '~/models/user.model'
 
@@ -14,15 +12,16 @@ export const uploadImages = async (req, res, next) => {
     const uploadedFiles = []
 
     for (const file of req.files) {
-      // eslint-disable-next-line no-unused-vars
-      const result = await cloudinary.uploader.upload(file.path, (error, result) => {
-        if (error) {
-          return res.status(400).json({
-            message: 'Tải ảnh lên thất bại!'
-          })
-        }
-      })
-      uploadedFiles.push(result.secure_url)
+      try {
+        const result = await cloudinary.uploader.upload(file.path)
+        uploadedFiles.push(result.secure_url)
+      } catch (error) {
+        // Xử lý lỗi tải lên cho từng tệp nhưng không gửi phản hồi ở đây
+        return res.status(400).json({
+          message: 'Tải ảnh lên thất bại!',
+          error: error.message
+        })
+      }
     }
 
     return res.status(200).json({
