@@ -95,7 +95,7 @@ export const createStaff = async (req, res, next) => {
   }
 }
 
-export const updateCustomer = async (req, res, next) => {
+export const updateProfile = async (req, res, next) => {
   try {
     const { error } = profileCustomerValid.validate(req.body, { abortEarly: false })
     if (error) {
