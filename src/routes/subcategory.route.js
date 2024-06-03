@@ -1,10 +1,10 @@
 import { Router } from 'express'
 import {
+  createSubcategory,
+  deleteSubcategory,
   getAllSubcategories,
   getSubcategoryById,
-  createSubcategory,
-  updateSubcategory,
-  deleteSubcategory
+  updateSubcategory
 } from '~/controllers/subcategory.controller'
 import { checkPermission } from '~/middlewares/checkPermission'
 

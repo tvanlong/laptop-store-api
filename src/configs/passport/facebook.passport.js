@@ -1,8 +1,8 @@
-import FacebookStrategy from 'passport-facebook'
-import User from '~/models/user.model'
-import passport from 'passport'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
+import passport from 'passport'
+import FacebookStrategy from 'passport-facebook'
+import User from '~/models/user.model'
 
 // Load environment variables
 dotenv.config()

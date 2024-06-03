@@ -1,10 +1,10 @@
 import { Router } from 'express'
 import {
+  createProduct,
+  deleteProduct,
   getAllProducts,
   getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct
+  updateProduct
 } from '~/controllers/product.controller'
 import { checkPermission } from '~/middlewares/checkPermission'
 

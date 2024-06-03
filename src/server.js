@@ -1,18 +1,18 @@
 /* eslint-disable no-console */
-import express from 'express'
-import cors from 'cors'
-import cookieParser from 'cookie-parser'
 import chalk from 'chalk'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import dotenv from 'dotenv'
+import express from 'express'
+import session from 'express-session'
 import helmet from 'helmet'
 import { connect } from 'mongoose'
-import dotenv from 'dotenv'
 import passport from 'passport'
-import session from 'express-session'
-import '~/configs/passport/google.passport'
-import '~/configs/passport/facebook.passport'
-import router from '~/routes'
-import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { corsOptions } from '~/configs/cors'
+import '~/configs/passport/facebook.passport'
+import '~/configs/passport/google.passport'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
+import router from '~/routes'
 
 const app = express()
 app.use(cookieParser())

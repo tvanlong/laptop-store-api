@@ -1,9 +1,9 @@
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
-import User from '~/models/user.model'
-import passport from 'passport'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
+import passport from 'passport'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { DEFAULT_ROLE } from '~/constants/defaultVariables'
+import User from '~/models/user.model'
 
 // Load environment variables
 dotenv.config()

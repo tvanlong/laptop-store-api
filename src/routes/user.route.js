@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import { checkPermission } from '~/middlewares/checkPermission'
 import {
   changePassword,
   createStaff,
@@ -11,6 +10,7 @@ import {
   updateCustomer,
   updateStaff
 } from '~/controllers/users.controller'
+import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerUser = Router()
 

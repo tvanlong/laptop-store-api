@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import passport from 'passport'
 import {
-  signUp,
-  signIn,
-  refreshToken,
   loginSuccess,
-  verifyEmail,
+  refreshToken,
+  signIn,
   signOutAdmin,
-  signOutMember
+  signOutMember,
+  signUp,
+  verifyEmail
 } from '~/controllers/auth.controller'
 import { checkPermission } from '~/middlewares/checkPermission'
 

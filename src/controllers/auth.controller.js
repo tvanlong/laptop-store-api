@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
+import bcryptjs from 'bcryptjs'
+import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
+import { DEFAULT_AVATAR, DEFAULT_ROLE } from '~/constants/defaultVariables'
 import User from '~/models/user.model'
-import { signInValid, signUpValid } from '~/validation/user.validation'
-import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
-import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
 import { loginSuccessService } from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
-import bcryptjs from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-import { DEFAULT_AVATAR, DEFAULT_ROLE } from '~/constants/defaultVariables'
+import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
+import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
+import { signInValid, signUpValid } from '~/validation/user.validation'
 
 dotenv.config()
 

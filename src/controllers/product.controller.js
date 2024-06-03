@@ -1,5 +1,5 @@
-import Subcategory from '~/models/subcategory.model'
 import Product from '~/models/product.model'
+import Subcategory from '~/models/subcategory.model'
 import { productValid } from '~/validation/product.validation'
 
 export const getAllProducts = async (req, res, next) => {
