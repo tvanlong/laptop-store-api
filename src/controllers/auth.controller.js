@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import { DEFAULT_AVATAR, DEFAULT_ROLE } from '~/constants/defaultVariables'
 import User from '~/models/user.model'
-import { loginSuccessService } from '~/services/auth.service'
+import authService from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
 import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
@@ -174,7 +174,7 @@ const loginSuccess = async (req, res, next) => {
     if (!userId) {
       return res.status(400).json({ message: 'Không tìm thấy userId' })
     }
-    const response = await loginSuccessService(userId, res)
+    const response = await authService.loginSuccessService(userId, res)
     return res.status(200).json(response)
   } catch (error) {
     next(error)

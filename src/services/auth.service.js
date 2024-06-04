@@ -3,7 +3,7 @@ import User from '~/models/user.model'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
 import { setTokenIntoCookie } from '~/utils/utils'
 
-export const loginSuccessService = async (userId, res) => {
+const loginSuccessService = async (userId, res) => {
   const userExists = await User.findOne({ _id: userId })
   const payload = { _id: userExists._id, email: userExists.email, role: userExists.role }
   const accessToken = generateAccessToken(payload)
@@ -16,4 +16,8 @@ export const loginSuccessService = async (userId, res) => {
     access_token: 'Bearer ' + accessToken,
     refresh_token: 'Bearer ' + refreshToken
   }
+}
+
+export default {
+  loginSuccessService
 }
