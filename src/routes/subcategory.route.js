@@ -1,19 +1,13 @@
 import { Router } from 'express'
-import {
-  createSubcategory,
-  deleteSubcategory,
-  getAllSubcategories,
-  getSubcategoryById,
-  updateSubcategory
-} from '~/controllers/subcategory.controller'
+import subcategoryController from '~/controllers/subcategory.controller'
 import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerSubcategory = Router()
 
-routerSubcategory.get('/', getAllSubcategories)
-routerSubcategory.get('/:id', getSubcategoryById)
-routerSubcategory.post('/', checkPermission('admin'), createSubcategory)
-routerSubcategory.put('/:id', checkPermission('admin'), updateSubcategory)
-routerSubcategory.delete('/:id', checkPermission('admin'), deleteSubcategory)
+routerSubcategory.get('/', subcategoryController.getAllSubcategories)
+routerSubcategory.get('/:id', subcategoryController.getSubcategoryById)
+routerSubcategory.post('/', checkPermission('admin'), subcategoryController.createSubcategory)
+routerSubcategory.put('/:id', checkPermission('admin'), subcategoryController.updateSubcategory)
+routerSubcategory.delete('/:id', checkPermission('admin'), subcategoryController.deleteSubcategory)
 
 export default routerSubcategory

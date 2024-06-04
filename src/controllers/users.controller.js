@@ -4,7 +4,7 @@ import { DEFAULT_AVATAR } from '~/constants/defaultVariables'
 import User from '~/models/user.model'
 import { changePasswordValid, profileCustomerValid, userValid } from '~/validation/user.validation'
 
-export const getAllCustomers = async (req, res, next) => {
+const getAllCustomers = async (req, res, next) => {
   try {
     const customers = await User.find({ role: 'member' })
     if (!customers || customers.length == 0) {
@@ -20,7 +20,7 @@ export const getAllCustomers = async (req, res, next) => {
   }
 }
 
-export const getCustomer = async (req, res, next) => {
+const getCustomer = async (req, res, next) => {
   try {
     const { id } = req.params
     const customer = await User.findById(id)
@@ -37,7 +37,7 @@ export const getCustomer = async (req, res, next) => {
   }
 }
 
-export const getAllStaffs = async (req, res, next) => {
+const getAllStaffs = async (req, res, next) => {
   try {
     const staffs = await User.find({ role: 'admin' })
     if (!staffs || staffs.length == 0) {
@@ -53,7 +53,7 @@ export const getAllStaffs = async (req, res, next) => {
   }
 }
 
-export const getStaff = async (req, res, next) => {
+const getStaff = async (req, res, next) => {
   try {
     const { id } = req.params
     const staff = await User.findById(id)
@@ -70,7 +70,7 @@ export const getStaff = async (req, res, next) => {
   }
 }
 
-export const createStaff = async (req, res, next) => {
+const createStaff = async (req, res, next) => {
   try {
     const { error } = userValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -95,7 +95,7 @@ export const createStaff = async (req, res, next) => {
   }
 }
 
-export const updateProfile = async (req, res, next) => {
+const updateProfile = async (req, res, next) => {
   try {
     const { error } = profileCustomerValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -138,7 +138,7 @@ export const updateProfile = async (req, res, next) => {
   }
 }
 
-export const changePassword = async (req, res, next) => {
+const changePassword = async (req, res, next) => {
   try {
     const { error } = changePasswordValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -166,7 +166,7 @@ export const changePassword = async (req, res, next) => {
   }
 }
 
-export const updateStaff = async (req, res, next) => {
+const updateStaff = async (req, res, next) => {
   try {
     const { error } = userValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -225,7 +225,7 @@ export const updateStaff = async (req, res, next) => {
   }
 }
 
-export const deleteStaff = async (req, res, next) => {
+const deleteStaff = async (req, res, next) => {
   try {
     const { id } = req.params
     const staff = await User.findById(id)
@@ -237,4 +237,16 @@ export const deleteStaff = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+}
+
+export default {
+  getAllCustomers,
+  getCustomer,
+  getAllStaffs,
+  getStaff,
+  createStaff,
+  updateProfile,
+  changePassword,
+  updateStaff,
+  deleteStaff
 }

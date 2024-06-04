@@ -12,7 +12,7 @@ import { signInValid, signUpValid } from '~/validation/user.validation'
 
 dotenv.config()
 
-export const signUp = async (req, res, next) => {
+const signUp = async (req, res, next) => {
   try {
     // 1. Validate dữ liệu nguời dùng
     const { error } = signUpValid.validate(req.body, { abortEarly: false })
@@ -42,7 +42,7 @@ export const signUp = async (req, res, next) => {
   }
 }
 
-export const verifyEmail = async (req, res, next) => {
+const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.params
 
@@ -71,7 +71,7 @@ export const verifyEmail = async (req, res, next) => {
   }
 }
 
-export const signIn = async (req, res, next) => {
+const signIn = async (req, res, next) => {
   try {
     // 1. Validate dữ liệu nguời dùng
     const { error } = signInValid.validate(req.body, { abortEarly: false })
@@ -114,7 +114,7 @@ export const signIn = async (req, res, next) => {
   }
 }
 
-export const signOutAdmin = async (req, res, next) => {
+const signOutAdmin = async (req, res, next) => {
   try {
     clearCookieAdmin(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
@@ -123,7 +123,7 @@ export const signOutAdmin = async (req, res, next) => {
   }
 }
 
-export const signOutMember = async (req, res, next) => {
+const signOutMember = async (req, res, next) => {
   try {
     clearCookieMember(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
@@ -132,7 +132,7 @@ export const signOutMember = async (req, res, next) => {
   }
 }
 
-export const refreshToken = async (req, res, next) => {
+const refreshToken = async (req, res, next) => {
   try {
     let refreshToken
     // Kiểm tra domain của yêu cầu
@@ -168,7 +168,7 @@ export const refreshToken = async (req, res, next) => {
   }
 }
 
-export const loginSuccess = async (req, res, next) => {
+const loginSuccess = async (req, res, next) => {
   try {
     const { userId } = req.body
     if (!userId) {
@@ -179,4 +179,14 @@ export const loginSuccess = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+}
+
+export default {
+  signUp,
+  verifyEmail,
+  signIn,
+  signOutAdmin,
+  signOutMember,
+  refreshToken,
+  loginSuccess
 }

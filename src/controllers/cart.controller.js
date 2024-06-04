@@ -3,7 +3,7 @@ import Cart from '~/models/cart.model'
 import User from '~/models/user.model'
 import { caculateTotalPrice, caculateTotalPriceAfterPopulate } from '~/utils/caculateTotalPrice'
 
-export const addItemToCart = async (req, res, next) => {
+const addItemToCart = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let user = await User.exists({ _id: userId })
@@ -53,7 +53,7 @@ export const addItemToCart = async (req, res, next) => {
   }
 }
 
-export const getCart = async (req, res, next) => {
+const getCart = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let user = await User.exists({ _id: userId })
@@ -85,7 +85,7 @@ export const getCart = async (req, res, next) => {
   }
 }
 
-export const increaseQuantity = async (req, res, next) => {
+const increaseQuantity = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let user = await User.exists({ _id: userId })
@@ -117,7 +117,7 @@ export const increaseQuantity = async (req, res, next) => {
   }
 }
 
-export const decreaseQuantity = async (req, res, next) => {
+const decreaseQuantity = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let user = await User.exists({ _id: userId })
@@ -153,7 +153,7 @@ export const decreaseQuantity = async (req, res, next) => {
   }
 }
 
-export const updateCartQuantity = async (req, res, next) => {
+const updateCartQuantity = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let user = await User.exists({ _id: userId })
@@ -190,7 +190,7 @@ export const updateCartQuantity = async (req, res, next) => {
   }
 }
 
-export const removeItem = async (req, res, next) => {
+const removeItem = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let versionId = req.body.versionId
@@ -220,7 +220,7 @@ export const removeItem = async (req, res, next) => {
   }
 }
 
-export const removeCart = async (req, res, next) => {
+const removeCart = async (req, res, next) => {
   try {
     let userId = req.params.userId
     let user = await User.exists({ _id: userId })
@@ -235,4 +235,14 @@ export const removeCart = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+}
+
+export default {
+  addItemToCart,
+  getCart,
+  increaseQuantity,
+  decreaseQuantity,
+  updateCartQuantity,
+  removeItem,
+  removeCart
 }

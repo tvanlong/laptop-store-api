@@ -1,7 +1,7 @@
 import cloudinary from '~/configs/cloudinary'
 import User from '~/models/user.model'
 
-export const uploadImages = async (req, res, next) => {
+const uploadImages = async (req, res, next) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -33,7 +33,7 @@ export const uploadImages = async (req, res, next) => {
   }
 }
 
-export const deleteImage = async (req, res, next) => {
+const deleteImage = async (req, res, next) => {
   try {
     const { public_id } = req.params
     // eslint-disable-next-line no-unused-vars
@@ -52,7 +52,7 @@ export const deleteImage = async (req, res, next) => {
   }
 }
 
-export const uploadAvatar = async (req, res, next) => {
+const uploadAvatar = async (req, res, next) => {
   try {
     const { id } = req.params
     const user = await User.findById(id)
@@ -78,4 +78,10 @@ export const uploadAvatar = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+}
+
+export default {
+  uploadImages,
+  deleteImage,
+  uploadAvatar
 }

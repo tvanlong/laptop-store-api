@@ -1,19 +1,13 @@
 import { Router } from 'express'
-import {
-  createProduct,
-  deleteProduct,
-  getAllProducts,
-  getProductById,
-  updateProduct
-} from '~/controllers/product.controller'
+import productController from '~/controllers/product.controller'
 import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerProduct = Router()
 
-routerProduct.get('/', getAllProducts)
-routerProduct.get('/:id', getProductById)
-routerProduct.post('/', checkPermission('admin'), createProduct)
-routerProduct.put('/:id', checkPermission('admin'), updateProduct)
-routerProduct.delete('/:id', checkPermission('admin'), deleteProduct)
+routerProduct.get('/', productController.getAllProducts)
+routerProduct.get('/:id', productController.getProductById)
+routerProduct.post('/', checkPermission('admin'), productController.createProduct)
+routerProduct.put('/:id', checkPermission('admin'), productController.updateProduct)
+routerProduct.delete('/:id', checkPermission('admin'), productController.deleteProduct)
 
 export default routerProduct

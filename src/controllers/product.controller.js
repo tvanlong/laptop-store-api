@@ -2,7 +2,7 @@ import Product from '~/models/product.model'
 import Subcategory from '~/models/subcategory.model'
 import { productValid } from '~/validation/product.validation'
 
-export const getAllProducts = async (req, res, next) => {
+const getAllProducts = async (req, res, next) => {
   try {
     const { page, limit, sort, order, keyword } = req.query
     const options = {
@@ -41,7 +41,7 @@ export const getAllProducts = async (req, res, next) => {
   }
 }
 
-export const getProductById = async (req, res, next) => {
+const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params
     const product = await Product.findById(id)
@@ -62,7 +62,7 @@ export const getProductById = async (req, res, next) => {
   }
 }
 
-export const createProduct = async (req, res, next) => {
+const createProduct = async (req, res, next) => {
   try {
     const { error } = productValid.validate(req.body)
     if (error) {
@@ -104,7 +104,7 @@ export const createProduct = async (req, res, next) => {
   }
 }
 
-export const updateProduct = async (req, res, next) => {
+const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params
     const { error } = productValid.validate(req.body, { abortEarly: false })
@@ -152,7 +152,7 @@ export const updateProduct = async (req, res, next) => {
   }
 }
 
-export const deleteProduct = async (req, res, next) => {
+const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id)
     if (!product) {
@@ -164,3 +164,5 @@ export const deleteProduct = async (req, res, next) => {
     next(error)
   }
 }
+
+export default { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct }

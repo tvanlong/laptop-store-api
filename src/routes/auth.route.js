@@ -1,26 +1,18 @@
 import { Router } from 'express'
 import passport from 'passport'
-import {
-  loginSuccess,
-  refreshToken,
-  signIn,
-  signOutAdmin,
-  signOutMember,
-  signUp,
-  verifyEmail
-} from '~/controllers/auth.controller'
+import authController from '~/controllers/auth.controller'
 import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerAuth = Router()
 const { URL_CLIENT, URL_CLIENT_DEPLOY } = process.env
 
-routerAuth.post('/signup', signUp)
-routerAuth.post('/signin', signIn)
-routerAuth.post('/signout-admin', checkPermission('admin'), signOutAdmin)
-routerAuth.post('/signout-member', checkPermission('member'), signOutMember)
-routerAuth.post('/verify/:token', verifyEmail)
-routerAuth.post('/refresh-token', refreshToken)
-routerAuth.post('/signin-success', loginSuccess)
+routerAuth.post('/signup', authController.signUp)
+routerAuth.post('/signin', authController.signIn)
+routerAuth.post('/signout-admin', checkPermission('admin'), authController.signOutAdmin)
+routerAuth.post('/signout-member', checkPermission('member'), authController.signOutMember)
+routerAuth.post('/verify/:token', authController.verifyEmail)
+routerAuth.post('/refresh-token', authController.refreshToken)
+routerAuth.post('/signin-success', authController.loginSuccess)
 
 // ============================================ Google OAuth 2.0 ================================================
 routerAuth.get(

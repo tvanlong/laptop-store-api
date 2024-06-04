@@ -3,7 +3,7 @@ import Product from '~/models/product.model'
 import Version from '~/models/version.model'
 import { versionValid } from '~/validation/version.validation'
 
-export const getAllVersions = async (req, res, next) => {
+const getAllVersions = async (req, res, next) => {
   try {
     const { page, limit, sort, order, keyword, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
     const options = {
@@ -56,7 +56,7 @@ export const getAllVersions = async (req, res, next) => {
   }
 }
 
-export const getAllVersionsByCategory = async (req, res, next) => {
+const getAllVersionsByCategory = async (req, res, next) => {
   try {
     const { category } = req.params
     const { page, limit, sort, order, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
@@ -109,7 +109,7 @@ export const getAllVersionsByCategory = async (req, res, next) => {
   }
 }
 
-export const getAllVersionsBySubcategory = async (req, res, next) => {
+const getAllVersionsBySubcategory = async (req, res, next) => {
   try {
     const { subcategory } = req.params
     const { page, limit, sort, order, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
@@ -159,7 +159,7 @@ export const getAllVersionsBySubcategory = async (req, res, next) => {
   }
 }
 
-export const getVersionById = async (req, res, next) => {
+const getVersionById = async (req, res, next) => {
   try {
     const version = await Version.findById(req.params.id).populate({
       path: 'product',
@@ -182,7 +182,7 @@ export const getVersionById = async (req, res, next) => {
   }
 }
 
-export const createVersion = async (req, res, next) => {
+const createVersion = async (req, res, next) => {
   try {
     const existedVersion = await Version.findOne({ name: req.body.name })
     if (existedVersion) {
@@ -218,7 +218,7 @@ export const createVersion = async (req, res, next) => {
   }
 }
 
-export const updateVersion = async (req, res, next) => {
+const updateVersion = async (req, res, next) => {
   try {
     const { error } = versionValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -262,7 +262,7 @@ export const updateVersion = async (req, res, next) => {
   }
 }
 
-export const deleteVersion = async (req, res, next) => {
+const deleteVersion = async (req, res, next) => {
   try {
     const version = await Version.findById(req.params.id)
     if (!version) {
@@ -338,4 +338,14 @@ const applyRegexFilters = (filter, ram, memory, screen, cpu, vga) => {
       filter[key] = { $regex: `${field}: ${value}`, $options: 'i' }
     }
   })
+}
+
+export default {
+  getAllVersions,
+  getAllVersionsByCategory,
+  getAllVersionsBySubcategory,
+  getVersionById,
+  createVersion,
+  updateVersion,
+  deleteVersion
 }

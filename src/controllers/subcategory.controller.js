@@ -2,7 +2,7 @@ import Category from '~/models/category.model'
 import Subcategory from '~/models/subcategory.model'
 import { subcategoryValid } from '~/validation/subcategory.validation'
 
-export const getAllSubcategories = async (req, res, next) => {
+const getAllSubcategories = async (req, res, next) => {
   try {
     const subcategories = await Subcategory.find({}).populate('category')
     if (!subcategories || subcategories.length == 0) {
@@ -18,7 +18,7 @@ export const getAllSubcategories = async (req, res, next) => {
   }
 }
 
-export const getSubcategoryById = async (req, res, next) => {
+const getSubcategoryById = async (req, res, next) => {
   try {
     const { id } = req.params
     const subcategory = await Subcategory.findById(id).populate('category')
@@ -35,7 +35,7 @@ export const getSubcategoryById = async (req, res, next) => {
   }
 }
 
-export const createSubcategory = async (req, res, next) => {
+const createSubcategory = async (req, res, next) => {
   try {
     const { error } = subcategoryValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -75,7 +75,7 @@ export const createSubcategory = async (req, res, next) => {
   }
 }
 
-export const updateSubcategory = async (req, res, next) => {
+const updateSubcategory = async (req, res, next) => {
   try {
     const { error } = subcategoryValid.validate(req.body, { abortEarly: false })
     if (error) {
@@ -124,7 +124,7 @@ export const updateSubcategory = async (req, res, next) => {
   }
 }
 
-export const deleteSubcategory = async (req, res, next) => {
+const deleteSubcategory = async (req, res, next) => {
   try {
     const subcategory = await Subcategory.findByIdAndDelete(req.params.id)
     if (!subcategory) {
@@ -135,4 +135,12 @@ export const deleteSubcategory = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+}
+
+export default {
+  getAllSubcategories,
+  getSubcategoryById,
+  createSubcategory,
+  updateSubcategory,
+  deleteSubcategory
 }
