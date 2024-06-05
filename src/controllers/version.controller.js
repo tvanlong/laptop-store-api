@@ -228,7 +228,7 @@ const updateVersion = async (req, res, next) => {
     }
 
     const existedVersion = await Version.findOne({ name: req.body.name })
-    if (existedVersion) {
+    if (existedVersion && existedVersion._id != req.params.id) {
       return res.status(400).json({ message: 'Sản phẩm này đã tồn tại!' })
     }
 
