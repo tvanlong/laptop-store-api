@@ -3,6 +3,7 @@ import routerAuth from './auth.route'
 import routerCart from './cart.route'
 import routerCategory from './category.route'
 import routerOrder from './order.route'
+import routerPayment from './payment.route'
 import routerProduct from './product.route'
 import routerSubcategory from './subcategory.route'
 import routerImages from './upload.route'
@@ -20,5 +21,6 @@ router.use('/carts', routerCart)
 router.use('/orders', routerOrder)
 router.use('/users', routerUser)
 router.use('/auth', routerAuth)
+router.use('/payment', routerPayment)
 
 export default router
