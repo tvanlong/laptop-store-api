@@ -1,5 +1,7 @@
+import axios from 'axios'
 import Cart from '~/models/cart.model'
 import Order from '~/models/order.model'
+import orderService from '~/services/order.service'
 import { caculateTotalPrice } from '~/utils/caculateTotalPrice'
 
 const createOrderCheckout = async (req, res, next) => {
@@ -16,7 +18,8 @@ const createOrderCheckout = async (req, res, next) => {
         quantity: item.quantity
       })),
       total_price,
-      shipping_address: req.body.shipping_address
+      shipping_address: req.body.shipping_address,
+      payment_method: req.body.payment_method
     })
 
     await Cart.deleteOne({ userId: req.params.userId })
@@ -25,6 +28,41 @@ const createOrderCheckout = async (req, res, next) => {
       message: 'Dặt hàng thành công',
       data: order
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const createPaymentWithMomo = async (req, res) => {
+  const options = await orderService.createOptionsSendToMoMoEndpoint()
+
+  // Call MoMo API
+  let result
+  try {
+    result = await axios(options)
+    return res.status(200).json(result.data)
+  } catch (error) {
+    return res.status(500).json({ message: 'Error while calling MoMo API' })
+  }
+}
+
+const completePaymentWithMomo = async (req, res, next) => {
+  try {
+    console.log('Payment completed!')
+    console.log(req.body)
+    return res.status(200).json(req.body)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const receiveTransactionStatus = async (req, res, next) => {
+  try {
+    const { orderId } = req.body
+    const options = await orderService.createOptionsReceiveTransactionStatus(orderId)
+
+    const result = await axios(options)
+    return res.status(200).json(result.data)
   } catch (error) {
     next(error)
   }
@@ -112,5 +150,8 @@ export default {
   getOrderById,
   getOrdersByUserId,
   getAllOrders,
-  updateStatusOrder
+  updateStatusOrder,
+  createPaymentWithMomo,
+  completePaymentWithMomo,
+  receiveTransactionStatus
 }

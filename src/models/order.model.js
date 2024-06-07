@@ -11,7 +11,8 @@ const orderSchema = new mongoose.Schema(
     items: [itemSchema],
     total_price: { type: Number, default: 0 },
     shipping_address: { type: String, default: '' },
-    status: { type: String, default: 'Chờ xác nhận' }
+    status: { type: String, default: 'Chờ xác nhận' },
+    payment_method: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment_methods' }
   },
   {
     timestamps: true,
