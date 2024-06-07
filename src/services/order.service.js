@@ -17,7 +17,7 @@ const IPN_URL =
     ? `${URL_API_DEPLOY}/api/orders/complete-pay-with-momo`
     : `${IPN_URL_MOMO_NGROK}/api/orders/complete-pay-with-momo`
 
-const createOptionsSendToMoMoEndpoint = async () => {
+const createOptionsSendToMoMoEndpoint = async (extraDataBase64, total_price) => {
   // https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   // Parameters
   var accessKey = ACCESS_KEY_MOMO
@@ -27,10 +27,10 @@ const createOptionsSendToMoMoEndpoint = async () => {
   var redirectUrl = REDIRECT_URL
   var ipnUrl = IPN_URL
   var requestType = 'payWithMethod'
-  var amount = '1000'
+  var amount = total_price
   var orderId = partnerCode + new Date().getTime()
   var requestId = orderId
-  var extraData = ''
+  var extraData = extraDataBase64
   var orderGroupId = ''
   var autoCapture = true
   var lang = 'vi'

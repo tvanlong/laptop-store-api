@@ -2,6 +2,7 @@ import axios from 'axios'
 import Cart from '~/models/cart.model'
 import Order from '~/models/order.model'
 import orderService from '~/services/order.service'
+import { decodeBase64ToJson, encodeJsonToBase64 } from '~/utils/base64Utils'
 import { caculateTotalPrice } from '~/utils/caculateTotalPrice'
 
 const createOrderCheckout = async (req, res, next) => {
@@ -34,7 +35,21 @@ const createOrderCheckout = async (req, res, next) => {
 }
 
 const createPaymentWithMomo = async (req, res) => {
-  const options = await orderService.createOptionsSendToMoMoEndpoint()
+  const cart = await Cart.findOne({ userId: req.query.user_id })
+  if (!cart) return res.status(404).json({ message: 'Không tìm thấy giỏ hàng' })
+  const total_price = await caculateTotalPrice(cart)
+
+  const extraDataBase64 = encodeJsonToBase64({
+    user: req.query.user_id,
+    items: cart.cart_items.map((item) => ({
+      version: item.version,
+      quantity: item.quantity
+    })),
+    total_price,
+    shipping_address: req.body.shipping_address,
+    payment_method: req.body.payment_method
+  })
+  const options = await orderService.createOptionsSendToMoMoEndpoint(extraDataBase64, total_price)
 
   // Call MoMo API
   let result
@@ -50,6 +65,7 @@ const completePaymentWithMomo = async (req, res, next) => {
   try {
     console.log('Payment completed!')
     console.log(req.body)
+    console.log('extraData: ', decodeBase64ToJson(req.body.extraData))
     return res.status(200).json(req.body)
   } catch (error) {
     next(error)
