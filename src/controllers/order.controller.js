@@ -35,12 +35,12 @@ const createOrderCheckout = async (req, res, next) => {
 }
 
 const createPaymentWithMomo = async (req, res) => {
-  const cart = await Cart.findOne({ userId: req.query.user_id })
+  const cart = await Cart.findOne({ userId: req.params.userId })
   if (!cart) return res.status(404).json({ message: 'Không tìm thấy giỏ hàng' })
   const total_price = await caculateTotalPrice(cart)
 
   const extraDataBase64 = encodeJsonToBase64({
-    user: req.query.user_id,
+    user: req.params.userId,
     items: cart.cart_items.map((item) => ({
       version: item.version,
       quantity: item.quantity
@@ -63,10 +63,23 @@ const createPaymentWithMomo = async (req, res) => {
 
 const completePaymentWithMomo = async (req, res, next) => {
   try {
-    console.log('Payment completed!')
-    console.log(req.body)
-    console.log('extraData: ', decodeBase64ToJson(req.body.extraData))
-    return res.status(200).json(req.body)
+    const responsePayment = req.body
+    const data = decodeBase64ToJson(responsePayment.extraData)
+    if (responsePayment.resultCode !== 0) {
+      return res.status(400).json({ message: 'Thanh toán không thành công' })
+    }
+
+    await Order.create({
+      user: data.user,
+      items: data.items,
+      total_price: data.total_price,
+      shipping_address: data.shipping_address,
+      payment_method: data.payment_method
+    })
+
+    await Cart.deleteOne({ userId: data.user })
+
+    return res.status(201).json({ message: 'Thanh toán thành công' })
   } catch (error) {
     next(error)
   }

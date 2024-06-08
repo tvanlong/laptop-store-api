@@ -11,7 +11,7 @@ const {
   PARTNER_CODE_MOMO
 } = process.env
 
-const REDIRECT_URL = BUILD_MODE === 'prod' ? URL_CLIENT_DEPLOY : URL_CLIENT
+const REDIRECT_URL = BUILD_MODE === 'prod' ? `${URL_CLIENT_DEPLOY}/checkout-success` : `${URL_CLIENT}/checkout-success`
 const IPN_URL =
   BUILD_MODE === 'prod'
     ? `${URL_API_DEPLOY}/api/orders/complete-pay-with-momo`

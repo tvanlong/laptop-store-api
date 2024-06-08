@@ -4,7 +4,7 @@ import orderController from '~/controllers/order.controller'
 const routerOrder = Router()
 
 // Payment with Momo
-routerOrder.post('/pay-with-momo', orderController.createPaymentWithMomo)
+routerOrder.post('/pay-with-momo/:userId', orderController.createPaymentWithMomo)
 routerOrder.post('/complete-pay-with-momo', orderController.completePaymentWithMomo)
 routerOrder.post('/transaction-status-momo', orderController.receiveTransactionStatus)
 
