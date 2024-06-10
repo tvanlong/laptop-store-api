@@ -8,6 +8,10 @@ routerOrder.post('/pay-with-momo/:userId', orderController.createPaymentWithMomo
 routerOrder.post('/complete-pay-with-momo', orderController.completePaymentWithMomo)
 routerOrder.post('/transaction-status-momo', orderController.receiveTransactionStatus)
 
+// Payment with ZaloPay
+routerOrder.post('/pay-with-zalopay/:userId', orderController.createPaymentWithZaloPay)
+routerOrder.post('/complete-pay-with-zalopay', orderController.completePaymentWithZaloPay)
+
 routerOrder.get('/', orderController.getAllOrders)
 routerOrder.post('/:userId', orderController.createOrderCheckout)
 routerOrder.get('/:userId', orderController.getOrdersByUserId)
