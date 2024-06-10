@@ -1,6 +1,7 @@
 import axios from 'axios'
 import CryptoJS from 'crypto-js'
 import moment from 'moment'
+import qs from 'qs'
 import { config } from '~/constants/zalopayConfig'
 import Cart from '~/models/cart.model'
 import Order from '~/models/order.model'
@@ -90,7 +91,7 @@ const completePaymentWithMomo = async (req, res, next) => {
   }
 }
 
-const receiveTransactionStatus = async (req, res, next) => {
+const receiveTransactionStatusMomo = async (req, res, next) => {
   try {
     const { orderId } = req.body
     const options = await orderService.createOptionsReceiveTransactionStatus(orderId)
@@ -101,7 +102,6 @@ const receiveTransactionStatus = async (req, res, next) => {
     next(error)
   }
 }
-// ------------------------------------------------
 
 // Create order checkout with payment method is ZaloPay
 const createPaymentWithZaloPay = async (req, res) => {
@@ -109,7 +109,7 @@ const createPaymentWithZaloPay = async (req, res) => {
     app_id: process.env.ZALOPAY_APP_ID,
     key1: process.env.ZALOPAY_KEY1,
     key2: process.env.ZALOPAY_KEY2,
-    endpoint: process.env.ZALOPAY_ENDPOINT
+    endpoint: process.env.ZALOPAY_ENDPOINT_CREATE
   }
 
   const embed_data = {
@@ -192,6 +192,42 @@ const completePaymentWithZaloPay = async (req, res) => {
   res.json(result)
 }
 
+const receiveTransactionStatusZaloPay = async (req, res, next) => {
+  try {
+    const app_trans_id = req.body.app_trans_id
+    const config = {
+      app_id: process.env.ZALOPAY_APP_ID,
+      key1: process.env.ZALOPAY_KEY1,
+      key2: process.env.ZALOPAY_KEY2,
+      endpoint: process.env.ZALOPAY_ENDPOINT_QUERY
+    }
+
+    let postData = {
+      app_id: config.app_id,
+      app_trans_id: app_trans_id
+    }
+
+    let data = postData.app_id + '|' + postData.app_trans_id + '|' + config.key1 // appid|app_trans_id|key1
+    postData.mac = CryptoJS.HmacSHA256(data, config.key1).toString()
+
+    let postConfig = {
+      method: 'POST',
+      url: config.endpoint,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: qs.stringify(postData)
+    }
+
+    const result = await axios(postConfig)
+    return res.status(200).json(result.data)
+  } catch (error) {
+    next(error)
+  }
+}
+
+// --------------------------------------------
+
 const getOrderById = async (req, res, next) => {
   try {
     const order = await Order.findOne({ user: req.params.userId, _id: req.params.orderId }).populate({
@@ -273,9 +309,10 @@ export default {
   createOrderCheckout,
   createPaymentWithMomo,
   completePaymentWithMomo,
-  receiveTransactionStatus,
+  receiveTransactionStatusMomo,
   createPaymentWithZaloPay,
   completePaymentWithZaloPay,
+  receiveTransactionStatusZaloPay,
   getOrderById,
   getOrdersByUserId,
   getAllOrders,
