@@ -113,23 +113,43 @@ const createPaymentWithZaloPay = async (req, res) => {
   }
 
   const embed_data = {
-    redirectURL: 'https://pcrender.com'
+    redirectURL:
+      process.env.BUILD_MODE === 'prod'
+        ? `${process.env.URL_CLIENT_DEPLOY}/checkout-success`
+        : `${process.env.URL_CLIENT}/checkout-success`
   }
 
-  const items = [{}]
+  const cart = await Cart.findOne({ userId: req.params.userId })
+  if (!cart) return res.status(404).json({ message: 'Không tìm thấy giỏ hàng' })
+  const total_price = await caculateTotalPrice(cart)
+
+  const orderData = {
+    user: req.params.userId,
+    items: cart.cart_items.map((item) => ({
+      version: item.version,
+      quantity: item.quantity
+    })),
+    total_price,
+    shipping_address: req.body.shipping_address,
+    payment_method: req.body.payment_method
+  }
+
+  const items = [orderData]
   const transID = Math.floor(Math.random() * 1000000)
   const order = {
     app_id: config.app_id,
-    app_trans_id: `${moment().format('YYMMDD')}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-    app_user: 'user123',
+    app_trans_id: `${moment().format('YYMMDD')}_${transID}`,
+    app_user: 'ZaloPayUser',
     app_time: Date.now(), // miliseconds
     item: JSON.stringify(items),
     embed_data: JSON.stringify(embed_data),
-    amount: 50000,
-    description: `Lazada - Payment for the order #${transID}`,
+    amount: total_price,
+    description: `Laptop KT - Payment for the order #${transID}`,
     bank_code: '',
     callback_url:
-      'https://2731-2405-4802-1f93-b490-b5a4-b3cb-4b20-6c00.ngrok-free.app/api/orders/complete-pay-with-zalopay'
+      process.env.BUILD_MODE === 'prod'
+        ? `${process.env.URL_API_DEPLOY}/api/orders/complete-pay-with-zalopay`
+        : `${process.env.IPN_URL_MOMO_NGROK}/api/orders/complete-pay-with-zalopay`
   }
 
   // appid|app_trans_id|appuser|amount|apptime|embeddata|item
@@ -151,7 +171,6 @@ const createPaymentWithZaloPay = async (req, res) => {
 
   try {
     const result = await axios.post(config.endpoint, null, { params: order })
-
     return res.status(200).json(result.data)
   } catch (error) {
     return res.status(500).json({ message: 'Error while calling ZaloPay API', error })
@@ -164,9 +183,7 @@ const completePaymentWithZaloPay = async (req, res) => {
   try {
     let dataStr = req.body.data
     let reqMac = req.body.mac
-
     let mac = CryptoJS.HmacSHA256(dataStr, config.key2).toString()
-    console.log('mac =', mac)
 
     // kiểm tra callback hợp lệ (đến từ ZaloPay server)
     if (reqMac !== mac) {
@@ -177,8 +194,21 @@ const completePaymentWithZaloPay = async (req, res) => {
       // thanh toán thành công
       // merchant cập nhật trạng thái cho đơn hàng
       let dataJson = JSON.parse(dataStr, config.key2)
-      // eslint-disable-next-line quotes
-      console.log("update order's status = success where app_trans_id =", dataJson['app_trans_id'])
+      dataJson.item = JSON.parse(dataJson.item)
+      dataJson.item.forEach((obj) => {
+        obj.items = JSON.parse(JSON.stringify(obj.items))
+      })
+      const orderData = dataJson.item[0]
+
+      await Order.create({
+        user: orderData.user,
+        items: orderData.items,
+        total_price: orderData.total_price,
+        shipping_address: orderData.shipping_address,
+        payment_method: orderData.payment_method
+      })
+
+      await Cart.deleteOne({ userId: orderData.user })
 
       result.return_code = 1
       result.return_message = 'success'
