@@ -1,4 +1,4 @@
-# 🛒 E-Commerce Platform
+# 🛒 API for an e-commerce platform
 
 ## ✨ **Project Overview:**
 
@@ -6,37 +6,25 @@ This project is a comprehensive e-commerce platform, incorporating various featu
 
 ## 📂 **Repository Structure:**
 
-- `.env`
-- `.prettierrc`
-- `package.json`
-- `README.md`
 - `src/`
+  - `config/`
+  - `constants/`
   - `controllers/`
-    - `auth.controller.js`
-    - `cart.controller.js`
-    - `category.controller.js`
-    - `images.controller.js`
-    - `order.controller.js`
-    - `product.controller.js`
-    - `subcategory.controller.js`
-    - `user.controller.js`
-    - `version.controller.js`
   - `middlewares/`
-    - `checkPermission.js`
-    - `uploadStorage.js`
   - `models/`
-    - `cart.model.js`
-    - `category.model.js`
-    - `order.model.js`
-    - `product.model.js`
-    - `subcategory.model.js`
-    - `user.model.js`
-    - `version.model.js`
   - `routes/`
-  - `server.js`
+  - `services/`
   - `uploads/`
   - `utils/`
   - `validation/`
+  - `server.js`
+- `.babelrc`
+- `.env`
+- `jsconfig.json`
+- `.prettierrc`
+- `package.json`
+- `README.md`
+- `...`
 
 ## 🚀 **Getting Started:**
 
@@ -44,7 +32,7 @@ Follow these steps to get a copy of the project up and running on your local mac
 
 ### **Prerequisites:**
 
-- Node.js
+- Node.js (v18.16.0 or higher)
 - npm
 
 ### **Cloning the Repository:**
@@ -59,7 +47,7 @@ git clone <repository-url>
 cd <project-directory>
 
 # Install the dependencies
-npm install
+npm install or npm i
 ```
 
 ### **Setting up the Environment Variables:**
