@@ -112,3 +112,18 @@ export const changePasswordValid = Joi.object({
     'any.only': 'Mật khẩu xác nhận phải trùng với mật khẩu'
   })
 })
+
+export const changeEmailValid = Joi.object({
+  email: Joi.string().required().email().messages({
+    'string.empty': 'Email không được để trống',
+    'any.required': 'Email là bắt buộc',
+    'string.email': 'Email không đúng định dạng'
+  }),
+
+  new_email: Joi.string().required().email().not(Joi.ref('email')).messages({
+    'string.empty': 'Email mới không được để trống',
+    'any.required': 'Email mới là bắt buộc',
+    'string.email': 'Email mới không đúng định dạng',
+    'any.invalid': 'Email mới phải khác với email hiện tại'
+  })
+})

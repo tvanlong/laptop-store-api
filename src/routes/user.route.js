@@ -11,6 +11,8 @@ routerUser.get('/customers/:id', usersController.getCustomer)
 // Route for customer and staff
 routerUser.patch('/update-profile/:id', usersController.updateProfile)
 routerUser.patch('/change-password/:id', usersController.changePassword)
+routerUser.post('/change-email/:id', usersController.changeEmail)
+routerUser.patch('/verify-email/:id', usersController.verifyEmail)
 
 // Route for staff
 routerUser.get('/staffs', checkPermission('admin'), usersController.getAllStaffs)
