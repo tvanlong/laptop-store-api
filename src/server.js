@@ -25,6 +25,8 @@ dotenv.config()
 const { APP_PORT, MONGO_ATLAS_URI } = process.env
 // Connect to MongoDB
 connect(MONGO_ATLAS_URI)
+  .then(() => console.log(chalk.greenBright('MongoDB connected')))
+  .catch((err) => console.log(chalk.redBright(err)))
 
 // Middleware
 app.use(helmet())
