@@ -24,6 +24,9 @@ const createOrderCheckout = async (req, res, next) => {
         quantity: item.quantity
       })),
       total_price,
+      province: req.body.province,
+      district: req.body.district,
+      ward: req.body.ward,
       shipping_address: req.body.shipping_address,
       payment_method: req.body.payment_method
     })
@@ -52,6 +55,9 @@ const createPaymentWithMomo = async (req, res) => {
       quantity: item.quantity
     })),
     total_price,
+    province: req.body.province,
+    district: req.body.district,
+    ward: req.body.ward,
     shipping_address: req.body.shipping_address,
     payment_method: req.body.payment_method
   })
@@ -79,6 +85,9 @@ const completePaymentWithMomo = async (req, res, next) => {
       user: data.user,
       items: data.items,
       total_price: data.total_price,
+      province: data.province,
+      district: data.district,
+      ward: data.ward,
       shipping_address: data.shipping_address,
       payment_method: data.payment_method
     })
@@ -130,6 +139,9 @@ const createPaymentWithZaloPay = async (req, res) => {
       quantity: item.quantity
     })),
     total_price,
+    province: req.body.province,
+    district: req.body.district,
+    ward: req.body.ward,
     shipping_address: req.body.shipping_address,
     payment_method: req.body.payment_method
   }
@@ -204,6 +216,9 @@ const completePaymentWithZaloPay = async (req, res) => {
         user: orderData.user,
         items: orderData.items,
         total_price: orderData.total_price,
+        province: orderData.province,
+        district: orderData.district,
+        ward: orderData.ward,
         shipping_address: orderData.shipping_address,
         payment_method: orderData.payment_method
       })
