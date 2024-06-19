@@ -28,5 +28,9 @@ export const versionValid = Joi.object({
   status: Joi.string().required().messages({
     'string.empty': 'Trạng thái không được để trống',
     'any.required': 'Trạng thái là bắt buộc'
+  }),
+  is_featured: Joi.boolean().required().messages({
+    'boolean.empty': 'Sản phẩm nổi bật không được để trống',
+    'any.required': 'Sản phẩm nổi bật là bắt buộc'
   })
 })

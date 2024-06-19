@@ -8,7 +8,8 @@ const versionSchema = new mongoose.Schema(
     current_price: { type: Number, required: true, min: 100 },
     description: [{ type: String, required: true, minLength: 3 }],
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Products', required: true },
-    status: { type: String, required: true }
+    status: { type: String, required: true },
+    is_featured: { type: Boolean, required: true }
   },
   {
     timestamps: true,
