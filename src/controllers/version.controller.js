@@ -43,7 +43,66 @@ const getAllVersions = async (req, res, next) => {
     // Loại bỏ các sản phẩm có category là "Linh kiện"
     const productIdsToExclude = await versionService.excludeProductsByCategoryName('Linh kiện')
     if (productIdsToExclude.length > 0) {
-      filter['product'] = { $nin: productIdsToExclude }
+      filter['product'] = { ...filter['product'], $nin: productIdsToExclude }
+    }
+
+    const versions = await Version.paginate(filter, options)
+    if (versions.totalDocs === 0) {
+      return res.status(200).json({
+        message: 'Không tìm thấy sản phẩm nào!',
+        data: []
+      })
+    }
+
+    return res.status(200).json({
+      message: 'Lấy sản phẩm thành công!',
+      data: versions
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getAllAccessories = async (req, res, next) => {
+  try {
+    const { page, limit, sort, order, keyword, price_min, price_max, ram } = req.query
+    const options = {
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 10,
+      populate: {
+        path: 'product',
+        select: 'name images subcategory',
+        populate: {
+          path: 'subcategory',
+          select: 'name category'
+        }
+      },
+      sort: versionService.getSortOptions(sort, order)
+    }
+
+    const filter = {}
+    // Lấy danh sách ID sản phẩm dựa trên từ khóa tìm kiếm
+    if (keyword) {
+      const productIds = await versionService.getProductIds(keyword)
+      if (productIds.length > 0) {
+        filter['product'] = { $in: productIds }
+      } else if (productIds.length === 0) {
+        return res.status(200).json({
+          message: 'Không tìm thấy sản phẩm nào!',
+          data: []
+        })
+      }
+    }
+
+    // Áp dụng bộ lọc giá
+    versionService.applyPriceRangeFilter(filter, price_min, price_max)
+    // Áp dụng bộ lọc regex theo cấu hình
+    versionService.applyRegexFilters(filter, ram)
+
+    // Loại bỏ các sản phẩm có category là "Linh kiện"
+    const productIdsToExclude = await versionService.excludeProductsByCategoryName('Linh kiện')
+    if (productIdsToExclude.length > 0) {
+      filter['product'] = { ...filter['product'], $in: productIdsToExclude }
     }
 
     const versions = await Version.paginate(filter, options)
@@ -324,6 +383,7 @@ const deleteVersion = async (req, res, next) => {
 
 export default {
   getAllVersions,
+  getAllAccessories,
   getAllFeaturedVersions,
   getAllVersionsByCategory,
   getAllVersionsBySubcategory,

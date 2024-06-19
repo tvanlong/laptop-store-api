@@ -5,6 +5,7 @@ import { checkPermission } from '~/middlewares/checkPermission'
 const routerVersion = Router()
 
 routerVersion.get('/', versionController.getAllVersions)
+routerVersion.get('/accessory', versionController.getAllAccessories)
 routerVersion.get('/featured', versionController.getAllFeaturedVersions)
 routerVersion.get('/category/:category', versionController.getAllVersionsByCategory)
 routerVersion.get('/subcategory/:subcategory', versionController.getAllVersionsBySubcategory)
