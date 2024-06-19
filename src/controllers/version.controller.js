@@ -40,6 +40,12 @@ const getAllVersions = async (req, res, next) => {
     // Áp dụng bộ lọc regex theo cấu hình
     versionService.applyRegexFilters(filter, ram, memory, screen, cpu, vga)
 
+    // Loại bỏ các sản phẩm có category là "Linh kiện"
+    const productIdsToExclude = await versionService.excludeProductsByCategoryName('Linh kiện')
+    if (productIdsToExclude.length > 0) {
+      filter['product'] = { $nin: productIdsToExclude }
+    }
+
     const versions = await Version.paginate(filter, options)
     if (versions.totalDocs === 0) {
       return res.status(200).json({
@@ -50,6 +56,33 @@ const getAllVersions = async (req, res, next) => {
 
     return res.status(200).json({
       message: 'Lấy sản phẩm thành công!',
+      data: versions
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getAllFeaturedVersions = async (req, res, next) => {
+  try {
+    const versions = await Version.find({ is_featured: true }).populate({
+      path: 'product',
+      select: 'name images subcategory',
+      populate: {
+        path: 'subcategory',
+        select: 'name category'
+      }
+    })
+
+    if (versions.length === 0) {
+      return res.status(200).json({
+        message: 'Không tìm thấy sản phẩm nào!',
+        data: []
+      })
+    }
+
+    return res.status(200).json({
+      message: 'Lấy sản phẩm nổi bật thành công!',
       data: versions
     })
   } catch (error) {
@@ -291,6 +324,7 @@ const deleteVersion = async (req, res, next) => {
 
 export default {
   getAllVersions,
+  getAllFeaturedVersions,
   getAllVersionsByCategory,
   getAllVersionsBySubcategory,
   getVersionById,

@@ -1,4 +1,6 @@
+import Category from '~/models/category.model'
 import Product from '~/models/product.model'
+import Subcategory from '~/models/subcategory.model'
 
 const getSortOptions = (sort, order) => {
   const sortOptions = {}
@@ -48,9 +50,24 @@ const applyRegexFilters = (filter, ram, memory, screen, cpu, vga) => {
   })
 }
 
+const excludeProductsByCategoryName = async (categoryName) => {
+  const categoryToExclude = await Category.findOne({ name: categoryName })
+  if (!categoryToExclude) {
+    return []
+  }
+
+  const subcategoriesToExclude = await Subcategory.find({ category: categoryToExclude._id }).select('_id')
+  const subcategoryIdsToExclude = subcategoriesToExclude.map((subcategory) => subcategory._id)
+  const productsToExclude = await Product.find({ subcategory: { $in: subcategoryIdsToExclude } }).select('_id')
+  const productIdsToExclude = productsToExclude.map((product) => product._id)
+
+  return productIdsToExclude
+}
+
 export default {
   getSortOptions,
   getProductIds,
   applyPriceRangeFilter,
-  applyRegexFilters
+  applyRegexFilters,
+  excludeProductsByCategoryName
 }
