@@ -22,11 +22,11 @@ const createOptionsSendToMoMoEndpoint = async (extraDataBase64, total_price) => 
   // Parameters
   var accessKey = ACCESS_KEY_MOMO
   var secretKey = SECRET_KEY_MOMO
-  var orderInfo = 'pay with MoMo'
+  var orderInfo = 'Thanh toán đơn hàng tại Laptop-KT với MoMo'
   var partnerCode = PARTNER_CODE_MOMO
   var redirectUrl = REDIRECT_URL
   var ipnUrl = IPN_URL
-  var requestType = 'payWithMethod'
+  var requestType = 'captureWallet' //'payWithMethod'
   var amount = total_price
   var orderId = partnerCode + new Date().getTime()
   var requestId = orderId
