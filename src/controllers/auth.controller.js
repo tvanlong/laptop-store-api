@@ -181,6 +181,29 @@ const loginSuccess = async (req, res, next) => {
   }
 }
 
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res.status(404).json({ message: 'Email không tồn tại!' })
+    }
+
+    // Tạo mật khẩu tạm thời ngẫu nhiên 8 ký tự từ 0-9, a-z
+    const newPassword = Math.random().toString(36).slice(-8)
+    const hashedPassword = await bcryptjs.hash(newPassword, 10)
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword })
+
+    // Gửi email thông báo mật khẩu mới
+    const message = `Mật khẩu mới của bạn là: ${newPassword}`
+    await sendEmail(email, 'Mật khẩu mới', message)
+
+    return res.status(200).json({ message: 'Mật khẩu mới đã được gửi vào email của bạn!' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   signUp,
   verifyEmail,
@@ -188,5 +211,6 @@ export default {
   signOutAdmin,
   signOutMember,
   refreshToken,
-  loginSuccess
+  loginSuccess,
+  forgotPassword
 }

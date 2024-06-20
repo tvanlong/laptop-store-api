@@ -8,6 +8,7 @@ const { URL_CLIENT, URL_CLIENT_DEPLOY } = process.env
 
 routerAuth.post('/signup', authController.signUp)
 routerAuth.post('/signin', authController.signIn)
+routerAuth.patch('/forgot-password', authController.forgotPassword)
 routerAuth.post('/signout-admin', checkPermission('admin'), authController.signOutAdmin)
 routerAuth.post('/signout-member', checkPermission('member'), authController.signOutMember)
 routerAuth.post('/verify/:token', authController.verifyEmail)
