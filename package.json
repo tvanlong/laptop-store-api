@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "author": "Longzannn",
   "description": "API for store",
+  "main": "src/server.js",
   "engines": {
     "node": "18.16.0"
   },
