@@ -192,23 +192,9 @@ const updateStaff = async (req, res, next) => {
       })
     }
 
-    if (req.body.password === staff.password) {
-      // TH: không thay đổi mật khẩu (Mã hóa mật khẩu không thay đổi)
-      const updatedStaff = await User.findByIdAndUpdate(
-        id,
-        {
-          name: req.body.name,
-          email: req.body.email,
-          phone: req.body.phone,
-          role: 'staff'
-        },
-        { new: true }
-      )
-      const { password, ...userInfo } = updatedStaff._doc
-      return res.status(200).json({
-        message: 'Cập nhật thông tin nhân viên thành công',
-        data: userInfo
-      })
+    const isMatch = await bcryptjs.compare(req.body.password, staff.password)
+    if (isMatch) {
+      return res.status(400).json({ message: 'Mật khẩu mới không được trùng với mật khẩu cũ' })
     }
 
     const hashedPassword = await bcryptjs.hash(req.body.password, 10)
