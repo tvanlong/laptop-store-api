@@ -41,7 +41,7 @@ const getCustomer = async (req, res, next) => {
 
 const getAllStaffs = async (req, res, next) => {
   try {
-    const staffs = await User.find({ role: 'admin' })
+    const staffs = await User.find({ role: 'staff' })
     if (!staffs || staffs.length == 0) {
       return res.status(404).json({ message: 'Không tìm thấy nhân viên nào' })
     }
@@ -86,7 +86,7 @@ const createStaff = async (req, res, next) => {
     }
 
     const hashedPassword = await bcryptjs.hash(req.body.password, 10)
-    const staff = await User.create({ ...req.body, password: hashedPassword, role: 'admin', avatar: DEFAULT_AVATAR })
+    const staff = await User.create({ ...req.body, password: hashedPassword, role: 'staff', avatar: DEFAULT_AVATAR })
     const { password, ...userInfo } = staff._doc
     return res.status(201).json({
       message: 'Tạo nhân viên mới thành công',
@@ -200,7 +200,7 @@ const updateStaff = async (req, res, next) => {
           name: req.body.name,
           email: req.body.email,
           phone: req.body.phone,
-          role: 'admin'
+          role: 'staff'
         },
         { new: true }
       )
@@ -214,7 +214,7 @@ const updateStaff = async (req, res, next) => {
     const hashedPassword = await bcryptjs.hash(req.body.password, 10)
     const updatedStaff = await User.findByIdAndUpdate(
       id,
-      { ...req.body, password: hashedPassword, role: 'admin' },
+      { ...req.body, password: hashedPassword, role: 'staff' },
       { new: true }
     )
     const { password, ...userInfo } = updatedStaff._doc

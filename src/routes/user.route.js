@@ -5,7 +5,7 @@ import { checkPermission } from '~/middlewares/checkPermission'
 const routerUser = Router()
 
 // Route for customer
-routerUser.get('/customers', checkPermission('admin'), usersController.getAllCustomers)
+routerUser.get('/customers', checkPermission('admin', 'staff'), usersController.getAllCustomers)
 routerUser.get('/customers/:id', usersController.getCustomer)
 
 // Route for customer and staff

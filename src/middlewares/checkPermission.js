@@ -8,10 +8,19 @@ export const checkPermission = (...roles) => {
   return async (req, res, next) => {
     try {
       let token
-      if (roles.includes('admin')) {
-        token = req.cookies.access_token_admin
-      } else {
-        token = req.cookies.access_token_member
+
+      // Lặp qua các vai trò để tìm token tương ứng
+      for (const role of roles) {
+        if (role === 'admin' && req.cookies.access_token_admin) {
+          token = req.cookies.access_token_admin
+          break
+        } else if (role === 'staff' && req.cookies.access_token_staff) {
+          token = req.cookies.access_token_staff
+          break
+        } else if (role === 'member' && req.cookies.access_token_member) {
+          token = req.cookies.access_token_member
+          break
+        }
       }
 
       // Kiểm tra token có hợp lệ không

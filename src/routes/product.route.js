@@ -6,8 +6,8 @@ const routerProduct = Router()
 
 routerProduct.get('/', productController.getAllProducts)
 routerProduct.get('/:id', productController.getProductById)
-routerProduct.post('/', checkPermission('admin'), productController.createProduct)
-routerProduct.put('/:id', checkPermission('admin'), productController.updateProduct)
-routerProduct.delete('/:id', checkPermission('admin'), productController.deleteProduct)
+routerProduct.post('/', checkPermission('admin', 'staff'), productController.createProduct)
+routerProduct.put('/:id', checkPermission('admin', 'staff'), productController.updateProduct)
+routerProduct.delete('/:id', checkPermission('admin', 'staff'), productController.deleteProduct)
 
 export default routerProduct

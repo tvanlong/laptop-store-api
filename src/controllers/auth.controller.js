@@ -7,7 +7,7 @@ import User from '~/models/user.model'
 import authService from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
-import { clearCookieAdmin, clearCookieMember, setTokenIntoCookie } from '~/utils/utils'
+import { clearCookieAdmin, clearCookieMember, clearCookieStaff, setTokenIntoCookie } from '~/utils/utils'
 import { signInValid, signUpValid } from '~/validation/user.validation'
 
 dotenv.config()
@@ -123,6 +123,15 @@ const signOutAdmin = async (req, res, next) => {
   }
 }
 
+const signOutStaff = async (req, res, next) => {
+  try {
+    clearCookieStaff(res)
+    return res.status(200).json({ message: 'Đăng xuất thành công!' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const signOutMember = async (req, res, next) => {
   try {
     clearCookieMember(res)
@@ -209,6 +218,7 @@ export default {
   verifyEmail,
   signIn,
   signOutAdmin,
+  signOutStaff,
   signOutMember,
   refreshToken,
   loginSuccess,

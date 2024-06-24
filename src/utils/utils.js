@@ -19,12 +19,20 @@ export const setTokenIntoCookie = (res, accessToken, refreshToken, user) => {
   } else if (user.role === 'member') {
     res.cookie('access_token_member', accessToken, cookieOptions)
     res.cookie('refresh_token_member', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
+  } else if (user.role === 'staff') {
+    res.cookie('access_token_staff', accessToken, cookieOptions)
+    res.cookie('refresh_token_staff', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 })
   }
 }
 
 export const clearCookieAdmin = (res) => {
   res.clearCookie('access_token_admin')
   res.clearCookie('refresh_token_admin')
+}
+
+export const clearCookieStaff = (res) => {
+  res.clearCookie('access_token_staff')
+  res.clearCookie('refresh_token_staff')
 }
 
 export const clearCookieMember = (res) => {

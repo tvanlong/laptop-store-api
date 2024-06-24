@@ -10,8 +10,8 @@ routerVersion.get('/featured', versionController.getAllFeaturedVersions)
 routerVersion.get('/category/:category', versionController.getAllVersionsByCategory)
 routerVersion.get('/subcategory/:subcategory', versionController.getAllVersionsBySubcategory)
 routerVersion.get('/:id', versionController.getVersionById)
-routerVersion.post('/', checkPermission('admin'), versionController.createVersion)
-routerVersion.put('/:id', checkPermission('admin'), versionController.updateVersion)
-routerVersion.delete('/:id', checkPermission('admin'), versionController.deleteVersion)
+routerVersion.post('/', checkPermission('admin', 'staff'), versionController.createVersion)
+routerVersion.put('/:id', checkPermission('admin', 'staff'), versionController.updateVersion)
+routerVersion.delete('/:id', checkPermission('admin', 'staff'), versionController.deleteVersion)
 
 export default routerVersion
