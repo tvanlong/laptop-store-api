@@ -314,7 +314,7 @@ const getAllOrders = async (req, res, next) => {
     const orders = await Order.find()
       .populate({
         path: 'user',
-        select: 'name email'
+        select: 'name email avatar'
       })
       .populate({
         path: 'items.version',
