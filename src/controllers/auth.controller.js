@@ -7,7 +7,6 @@ import User from '~/models/user.model'
 import authService from '~/services/auth.service'
 import { sendEmail } from '~/utils/email'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
-import { clearCookieAdmin, clearCookieMember, clearCookieStaff, setTokenIntoCookie } from '~/utils/utils'
 import { signInValid, signUpValid } from '~/validation/user.validation'
 
 dotenv.config()
@@ -98,9 +97,6 @@ const signIn = async (req, res, next) => {
     const accessToken = generateAccessToken(payload)
     const refreshToken = generateRefreshToken(payload)
 
-    // 5. Gửi token trong cookie
-    setTokenIntoCookie(res, accessToken, refreshToken, user)
-
     // 6. Trả về thông tin người dùng đã đăng nhập và token
     const { password, ...userInfo } = user._doc
     return res.status(200).json({
@@ -116,7 +112,6 @@ const signIn = async (req, res, next) => {
 
 const signOutAdmin = async (req, res, next) => {
   try {
-    clearCookieAdmin(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
     next(error)
@@ -125,7 +120,6 @@ const signOutAdmin = async (req, res, next) => {
 
 const signOutStaff = async (req, res, next) => {
   try {
-    clearCookieStaff(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
     next(error)
@@ -134,7 +128,6 @@ const signOutStaff = async (req, res, next) => {
 
 const signOutMember = async (req, res, next) => {
   try {
-    clearCookieMember(res)
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
     next(error)
@@ -143,20 +136,13 @@ const signOutMember = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    let refreshToken
-    // Kiểm tra domain của yêu cầu
-    const origin = req.headers.origin || req.headers.referer
-    if (origin === process.env.URL_CLIENT || origin === process.env.URL_CLIENT_DEPLOY) {
-      refreshToken = req.cookies.refresh_token_member
-    } else if (origin === process.env.URL_ADMIN || origin === process.env.URL_ADMIN_DEPLOY) {
-      refreshToken = req.cookies.refresh_token_admin
-    }
+    const refresh_token = req.body.refresh_token.split(' ')[1]
 
-    if (!refreshToken) {
+    if (!refresh_token) {
       return res.status(401).json({ message: 'Bạn chưa đăng nhập!' })
     }
 
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (error, user) => {
+    jwt.verify(refresh_token, process.env.JWT_REFRESH_TOKEN, (error, user) => {
       if (error) {
         return res.status(403).json({ message: 'Token không hợp lệ!' })
       }
@@ -164,7 +150,6 @@ const refreshToken = async (req, res, next) => {
       const payload = { _id: user._id, email: user.email, role: user.role }
       const newAccessToken = generateAccessToken(payload)
       const newRefreshToken = generateRefreshToken(payload)
-      setTokenIntoCookie(res, newAccessToken, newRefreshToken, user)
 
       return res.status(200).json({
         message: 'Làm mới token thành công!',

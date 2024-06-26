@@ -6,13 +6,13 @@ const routerUser = Router()
 
 // Route for customer
 routerUser.get('/customers', checkPermission('admin', 'staff'), usersController.getAllCustomers)
-routerUser.get('/customers/:id', usersController.getCustomer)
+routerUser.get('/customers/:id', checkPermission('member'), usersController.getCustomer)
 
 // Route for customer and staff
-routerUser.patch('/update-profile/:id', usersController.updateProfile)
-routerUser.patch('/change-password/:id', usersController.changePassword)
-routerUser.post('/change-email/:id', usersController.changeEmail)
-routerUser.patch('/verify-email/:id', usersController.verifyEmail)
+routerUser.patch('/update-profile/:id', checkPermission('admin', 'staff', 'member'), usersController.updateProfile)
+routerUser.patch('/change-password/:id', checkPermission('admin', 'staff', 'member'), usersController.changePassword)
+routerUser.post('/change-email/:id', checkPermission('admin', 'staff', 'member'), usersController.changeEmail)
+routerUser.patch('/verify-email/:id', checkPermission('admin', 'staff', 'member'), usersController.verifyEmail)
 
 // Route for staff
 routerUser.get('/staffs', checkPermission('admin'), usersController.getAllStaffs)
