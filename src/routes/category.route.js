@@ -6,8 +6,8 @@ const routerCategory = Router()
 
 routerCategory.get('/', categoryController.getAllCategories)
 routerCategory.get('/:id', categoryController.getCategoryById)
-routerCategory.post('/', checkPermission('admin'), categoryController.createCategory)
-routerCategory.put('/:id', checkPermission('admin'), categoryController.updateCategory)
-routerCategory.delete('/:id', checkPermission('admin'), categoryController.deleteCategory)
+routerCategory.post('/', checkPermission('admin', 'staff'), categoryController.createCategory)
+routerCategory.put('/:id', checkPermission('admin', 'staff'), categoryController.updateCategory)
+routerCategory.delete('/:id', checkPermission('admin', 'staff'), categoryController.deleteCategory)
 
 export default routerCategory

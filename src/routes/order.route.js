@@ -18,10 +18,10 @@ routerOrder.post(
   orderController.receiveTransactionStatusZaloPay
 )
 
-routerOrder.get('/', checkPermission('admin'), orderController.getAllOrders)
+routerOrder.get('/', checkPermission('admin', 'staff'), orderController.getAllOrders)
 routerOrder.post('/:userId', checkPermission('member'), orderController.createOrderCheckout)
 routerOrder.get('/:userId', orderController.getOrdersByUserId)
-routerOrder.get('/:userId/:orderId', checkPermission('admin'), orderController.getOrderById)
+routerOrder.get('/:userId/:orderId', checkPermission('admin', 'staff'), orderController.getOrderById)
 routerOrder.patch('/:userId/:orderId', checkPermission('admin', 'member', 'staff'), orderController.updateStatusOrder)
 
 export default routerOrder
