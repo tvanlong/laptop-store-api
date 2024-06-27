@@ -4,7 +4,7 @@ import { checkPermission } from '~/middlewares/checkPermission'
 
 const routerPayment = Router()
 
-routerPayment.get('/', checkPermission('admin'), paymentController.getAllPaymentMethods)
+routerPayment.get('/', checkPermission('admin', 'staff', 'member'), paymentController.getAllPaymentMethods)
 routerPayment.post('/', checkPermission('admin'), paymentController.createPaymentMethod)
 
 export default routerPayment
