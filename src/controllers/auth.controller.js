@@ -110,23 +110,7 @@ const signIn = async (req, res, next) => {
   }
 }
 
-const signOutAdmin = async (req, res, next) => {
-  try {
-    return res.status(200).json({ message: 'Đăng xuất thành công!' })
-  } catch (error) {
-    next(error)
-  }
-}
-
-const signOutStaff = async (req, res, next) => {
-  try {
-    return res.status(200).json({ message: 'Đăng xuất thành công!' })
-  } catch (error) {
-    next(error)
-  }
-}
-
-const signOutMember = async (req, res, next) => {
+const signOut = async (req, res, next) => {
   try {
     return res.status(200).json({ message: 'Đăng xuất thành công!' })
   } catch (error) {
@@ -202,9 +186,7 @@ export default {
   signUp,
   verifyEmail,
   signIn,
-  signOutAdmin,
-  signOutStaff,
-  signOutMember,
+  signOut,
   refreshToken,
   loginSuccess,
   forgotPassword
