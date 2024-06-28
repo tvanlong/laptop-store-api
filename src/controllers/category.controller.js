@@ -42,8 +42,12 @@ const createCategory = async (req, res, next) => {
       return res.status(400).json({ errors })
     }
 
-    const { name } = req.body
-    const existedCategory = await Category.findOne({ name })
+    // Chuẩn hóa tên sản phẩm trước khi kiểm tra
+    const normalizedCategoryName = req.body.name.toLowerCase()
+    // Kiểm tra sự tồn tại của sản phẩm (bao gồm cả viết hoa và viết thường)
+    const existedCategory = await Category.findOne({
+      name: { $regex: new RegExp('^' + normalizedCategoryName + '$', 'i') }
+    })
     if (existedCategory) {
       return res.status(400).json({ message: 'Danh mục này đã tồn tại' })
     }
@@ -70,9 +74,13 @@ const updateCategory = async (req, res, next) => {
       return res.status(400).json({ errors })
     }
 
-    const { name } = req.body
-    const existedCategory = await Category.findOne({ name })
-    if (existedCategory) {
+    // Chuẩn hóa tên sản phẩm trước khi kiểm tra
+    const normalizedCategoryName = req.body.name.toLowerCase()
+    // Kiểm tra sự tồn tại của sản phẩm (bao gồm cả viết hoa và viết thường)
+    const existedCategory = await Category.findOne({
+      name: { $regex: new RegExp('^' + normalizedCategoryName + '$', 'i') }
+    })
+    if (existedCategory && existedCategory._id != req.params.id) {
       return res.status(400).json({ message: 'Danh mục này đã tồn tại' })
     }
 

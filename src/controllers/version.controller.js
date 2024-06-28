@@ -277,7 +277,12 @@ const getVersionById = async (req, res, next) => {
 
 const createVersion = async (req, res, next) => {
   try {
-    const existedVersion = await Version.findOne({ name: req.body.name })
+    // Chuẩn hóa tên sản phẩm trước khi kiểm tra
+    const normalizedVersionName = req.body.name.toLowerCase()
+    // Kiểm tra sự tồn tại của sản phẩm (bao gồm cả viết hoa và viết thường)
+    const existedVersion = await Version.findOne({
+      name: { $regex: new RegExp('^' + normalizedVersionName + '$', 'i') }
+    })
     if (existedVersion) {
       return res.status(400).json({ message: 'Sản phẩm này đã tồn tại!' })
     }
@@ -319,7 +324,12 @@ const updateVersion = async (req, res, next) => {
       return res.status(400).json({ errors })
     }
 
-    const existedVersion = await Version.findOne({ name: req.body.name })
+    // Chuẩn hóa tên sản phẩm trước khi kiểm tra
+    const normalizedVersionName = req.body.name.toLowerCase()
+    // Kiểm tra sự tồn tại của sản phẩm (bao gồm cả viết hoa và viết thường)
+    const existedVersion = await Version.findOne({
+      name: { $regex: new RegExp('^' + normalizedVersionName + '$', 'i') }
+    })
     if (existedVersion && existedVersion._id != req.params.id) {
       return res.status(400).json({ message: 'Sản phẩm này đã tồn tại!' })
     }

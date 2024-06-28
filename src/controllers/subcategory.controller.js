@@ -43,8 +43,12 @@ const createSubcategory = async (req, res, next) => {
       return res.status(400).json({ errors })
     }
 
-    const { name } = req.body
-    const existedSubcategory = await Subcategory.findOne({ name })
+    // Chuẩn hóa tên sản phẩm trước khi kiểm tra
+    const normalizedSubcategoryName = req.body.name.toLowerCase()
+    // Kiểm tra sự tồn tại của sản phẩm (bao gồm cả viết hoa và viết thường)
+    const existedSubcategory = await Subcategory.findOne({
+      name: { $regex: new RegExp('^' + normalizedSubcategoryName + '$', 'i') }
+    })
     if (existedSubcategory) {
       return res.status(400).json({ message: 'Danh mục này đã tồn tại' })
     }
