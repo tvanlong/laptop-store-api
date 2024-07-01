@@ -68,14 +68,17 @@ const getCart = async (req, res, next) => {
       }
     })
 
-    // Nếu deleted của version = true thì tự động xóa version đó khỏi giỏ hàng
-    cart.cart_items = cart.cart_items.filter((item) => !item.version.deleted)
-
-    if (!cart)
+    if (!cart) {
       return res.status(200).json({
         message: 'Không tìm thấy giỏ hàng',
         data: []
       })
+    }
+
+    // Nếu deleted của version = true thì tự động xóa version đó khỏi giỏ hàng
+    if (cart.cart_items.length > 0) {
+      cart.cart_items = cart.cart_items.filter((item) => !item.version.deleted)
+    }
 
     cart.total_price = await caculateTotalPriceAfterPopulate(cart)
     await cart.save()
