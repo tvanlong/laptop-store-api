@@ -415,12 +415,6 @@ const getListDeletedVersions = async (req, res, next) => {
     // Áp dụng bộ lọc regex theo cấu hình
     versionService.applyRegexFilters(filter, ram, memory, screen, cpu, vga)
 
-    // Loại bỏ các sản phẩm có category là "Linh kiện"
-    const productIdsToExclude = await versionService.excludeProductsByCategoryName('Linh kiện')
-    if (productIdsToExclude.length > 0) {
-      filter['product'] = { ...filter['product'], $nin: productIdsToExclude }
-    }
-
     // Tìm các phiên bản đã bị xóa với điều kiện và populate
     const versions = await Version.paginate(filter, options)
     if (versions.totalDocs === 0) {

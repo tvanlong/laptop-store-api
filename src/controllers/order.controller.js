@@ -294,6 +294,7 @@ const getOrdersByUserId = async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.params.userId }).populate({
       path: 'items.version',
+      options: { withDeleted: true },
       populate: {
         path: 'product'
       }
@@ -320,7 +321,8 @@ const getAllOrders = async (req, res, next) => {
         path: 'items.version',
         populate: {
           path: 'product'
-        }
+        },
+        options: { withDeleted: true }
       })
     if (!orders) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
 
