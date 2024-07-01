@@ -62,6 +62,7 @@ const getCart = async (req, res, next) => {
 
     let cart = await Cart.findOne({ userId: userId }).populate({
       path: 'cart_items.version',
+      options: { withDeleted: true },
       populate: {
         path: 'product'
       }
