@@ -213,14 +213,56 @@ const updateStaff = async (req, res, next) => {
   }
 }
 
-const deleteStaff = async (req, res, next) => {
+const softDeleteStaff = async (req, res, next) => {
   try {
     const { id } = req.params
     const staff = await User.findById(id)
     if (!staff) {
       return res.status(404).json({ message: 'Không tìm thấy nhân viên' })
     }
-    await User.findByIdAndDelete(id)
+
+    await User.delete({ _id: id })
+    return res.status(200).json({ message: 'Xóa nhân viên thành công' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getListDeletedStaffs = async (req, res, next) => {
+  try {
+    const staffs = await User.findWithDeleted({ role: 'staff', deleted: true })
+    return res.status(200).json({
+      message: 'Lấy danh sách nhân viên đã xóa thành công',
+      data: staffs || []
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const restoreDeletedStaff = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const staff = await User.findOneDeleted({ _id: id })
+    if (!staff) {
+      return res.status(404).json({ message: 'Không tìm thấy nhân viên' })
+    }
+
+    await User.restore({ _id: id })
+    return res.status(200).json({ message: 'Khôi phục nhân viên thành công' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteStaff = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const staff = await User.findOneDeleted({ _id: id })
+    if (!staff) {
+      return res.status(404).json({ message: 'Không tìm thấy nhân viên' })
+    }
+    await User.findOneAndUpdateDeleted({ _id: id })
     return res.status(200).json({ message: 'Xóa nhân viên thành công' })
   } catch (error) {
     next(error)
@@ -236,5 +278,8 @@ export default {
   updateProfile,
   changePassword,
   updateStaff,
+  softDeleteStaff,
+  getListDeletedStaffs,
+  restoreDeletedStaff,
   deleteStaff
 }

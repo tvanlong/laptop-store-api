@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import mongooseDelete from 'mongoose-delete'
 import { DEFAULT_AVATAR, DEFAULT_ROLE } from '~/constants/defaultVariables'
 
 const userSchema = new mongoose.Schema(
@@ -24,6 +25,11 @@ const userSchema = new mongoose.Schema(
     versionKey: false
   }
 )
+
+userSchema.plugin(mongooseDelete, {
+  deletedAt: true,
+  overrideMethods: 'all'
+})
 
 const User = mongoose.model('Users', userSchema)
 

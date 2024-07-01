@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import mongooseDelete from 'mongoose-delete'
 import mongoosePaginate from 'mongoose-paginate-v2'
 
 const versionSchema = new mongoose.Schema(
@@ -17,6 +18,10 @@ const versionSchema = new mongoose.Schema(
   }
 )
 
+versionSchema.plugin(mongooseDelete, {
+  deletedAt: true,
+  overrideMethods: 'all'
+})
 versionSchema.plugin(mongoosePaginate)
 
 const Version = mongoose.model('Versions', versionSchema)

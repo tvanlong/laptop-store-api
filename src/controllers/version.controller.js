@@ -365,14 +365,102 @@ const updateVersion = async (req, res, next) => {
   }
 }
 
-const deleteVersion = async (req, res, next) => {
+const softDeleteVersion = async (req, res, next) => {
   try {
     const version = await Version.findById(req.params.id)
     if (!version) {
       return res.status(404).json({ message: 'Không tìm thấy sản phẩm này!' })
     }
 
-    const deletedVersion = await Version.findByIdAndDelete(req.params.id)
+    await Version.delete({ _id: req.params.id })
+    return res.status(200).json({ message: 'Xóa sản phẩm thành công!' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getListDeletedVersions = async (req, res, next) => {
+  try {
+    const { sort, order, keyword, price_min, price_max, ram, memory, screen, cpu, vga } = req.query
+    const options = {
+      pagination: false,
+      populate: {
+        path: 'product',
+        select: 'name images subcategory',
+        populate: {
+          path: 'subcategory',
+          select: 'name category'
+        }
+      },
+      sort: versionService.getSortOptions(sort, order),
+      customFind: 'findWithDeleted'
+    }
+
+    const filter = { deleted: true }
+    // Lấy danh sách ID sản phẩm dựa trên từ khóa tìm kiếm
+    if (keyword) {
+      const productIds = await versionService.getProductIds(keyword)
+      if (productIds.length > 0) {
+        filter['product'] = { $in: productIds }
+      } else if (productIds.length === 0) {
+        return res.status(200).json({
+          message: 'Không tìm thấy sản phẩm nào!',
+          data: []
+        })
+      }
+    }
+
+    // Áp dụng bộ lọc giá
+    versionService.applyPriceRangeFilter(filter, price_min, price_max)
+    // Áp dụng bộ lọc regex theo cấu hình
+    versionService.applyRegexFilters(filter, ram, memory, screen, cpu, vga)
+
+    // Loại bỏ các sản phẩm có category là "Linh kiện"
+    const productIdsToExclude = await versionService.excludeProductsByCategoryName('Linh kiện')
+    if (productIdsToExclude.length > 0) {
+      filter['product'] = { ...filter['product'], $nin: productIdsToExclude }
+    }
+
+    // Tìm các phiên bản đã bị xóa với điều kiện và populate
+    const versions = await Version.paginate(filter, options)
+    if (versions.totalDocs === 0) {
+      return res.status(200).json({
+        message: 'Không tìm thấy sản phẩm nào!',
+        data: []
+      })
+    }
+
+    return res.status(200).json({
+      message: 'Lấy sản phẩm đã xóa thành công!',
+      data: versions
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const restoreDeletedVersion = async (req, res, next) => {
+  try {
+    const version = await Version.findOneDeleted({ _id: req.params.id })
+    if (!version) {
+      return res.status(404).json({ message: 'Không tìm thấy sản phẩm này!' })
+    }
+
+    await Version.restore({ _id: req.params.id })
+    return res.status(200).json({ message: 'Khôi phục sản phẩm thành công!' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteVersion = async (req, res, next) => {
+  try {
+    const version = await Version.findOneDeleted({ _id: req.params.id })
+    if (!version) {
+      return res.status(404).json({ message: 'Không tìm thấy sản phẩm này!' })
+    }
+
+    const deletedVersion = await Version.findOneAndUpdateDeleted({ _id: req.params.id })
     if (!deletedVersion) {
       return res.status(400).json({ message: 'Xóa sản phẩm không thành công!' })
     }
@@ -382,10 +470,7 @@ const deleteVersion = async (req, res, next) => {
       return res.status(400).json({ message: 'Cập nhật sản phẩm không thành công!' })
     }
 
-    return res.status(200).json({
-      message: 'Xóa sản phẩm thành công!',
-      data: deletedVersion
-    })
+    return res.status(200).json({ message: 'Xóa sản phẩm thành công!' })
   } catch (error) {
     next(error)
   }
@@ -400,5 +485,8 @@ export default {
   getVersionById,
   createVersion,
   updateVersion,
+  softDeleteVersion,
+  getListDeletedVersions,
+  restoreDeletedVersion,
   deleteVersion
 }
