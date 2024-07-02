@@ -1,10 +1,15 @@
 import Category from '~/models/category.model'
 import Subcategory from '~/models/subcategory.model'
+import subcategoryService from '~/services/subcategory.service'
 import { subcategoryValid } from '~/validation/subcategory.validation'
 
 const getAllSubcategories = async (req, res, next) => {
   try {
-    const subcategories = await Subcategory.find({}).populate('category')
+    const { sort, order, keyword } = req.query
+    const searchQuery = subcategoryService.getSearchQuery(keyword)
+    const sortOptions = subcategoryService.getSortOptions(sort, order)
+
+    const subcategories = await Subcategory.find(searchQuery).populate('category').sort(sortOptions)
     if (!subcategories || subcategories.length == 0) {
       return res.status(404).json({ message: 'Không tìm thấy danh mục nào' })
     }

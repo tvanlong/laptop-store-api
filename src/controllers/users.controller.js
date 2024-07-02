@@ -2,13 +2,16 @@
 import bcryptjs from 'bcryptjs'
 import { DEFAULT_AVATAR } from '~/constants/defaultVariables'
 import User from '~/models/user.model'
-import { sendEmail } from '~/utils/email'
-import { generateOTP } from '~/utils/generateOtp'
-import { changeEmailValid, changePasswordValid, profileCustomerValid, userValid } from '~/validation/user.validation'
+import userService from '~/services/user.service'
+import { changePasswordValid, profileCustomerValid, userValid } from '~/validation/user.validation'
 
 const getAllCustomers = async (req, res, next) => {
   try {
-    const customers = await User.find({ role: 'member' })
+    const { sort, order, keyword } = req.query
+    const searchQuery = userService.getSearchQuery(keyword)
+    const sortOptions = userService.getSortOptions(sort, order)
+
+    const customers = await User.find({ role: 'member', ...searchQuery }).sort(sortOptions)
     if (!customers || customers.length == 0) {
       return res.status(404).json({ message: 'Không tìm thấy khách hàng nào' })
     }
@@ -41,7 +44,11 @@ const getCustomer = async (req, res, next) => {
 
 const getAllStaffs = async (req, res, next) => {
   try {
-    const staffs = await User.find({ role: 'staff' })
+    const { sort, order, keyword } = req.query
+    const searchQuery = userService.getSearchQuery(keyword)
+    const sortOptions = userService.getSortOptions(sort, order)
+
+    const staffs = await User.find({ role: 'staff', ...searchQuery }).sort(sortOptions)
     if (!staffs || staffs.length == 0) {
       return res.status(404).json({ message: 'Không tìm thấy nhân viên nào' })
     }
