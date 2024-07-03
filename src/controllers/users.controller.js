@@ -269,7 +269,7 @@ const deleteStaff = async (req, res, next) => {
     if (!staff) {
       return res.status(404).json({ message: 'Không tìm thấy nhân viên' })
     }
-    await User.findOneAndUpdateDeleted({ _id: id })
+    await User.deleteOne({ _id: id })
     return res.status(200).json({ message: 'Xóa nhân viên thành công' })
   } catch (error) {
     next(error)

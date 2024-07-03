@@ -454,10 +454,7 @@ const deleteVersion = async (req, res, next) => {
       return res.status(404).json({ message: 'Không tìm thấy sản phẩm này!' })
     }
 
-    const deletedVersion = await Version.findOneAndUpdateDeleted({ _id: req.params.id })
-    if (!deletedVersion) {
-      return res.status(400).json({ message: 'Xóa sản phẩm không thành công!' })
-    }
+    await Version.deleteOne({ _id: req.params.id })
 
     const updatedProduct = await Product.findByIdAndUpdate(version.product, { $pull: { versions: version._id } })
     if (!updatedProduct) {
