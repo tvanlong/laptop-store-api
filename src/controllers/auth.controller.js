@@ -1,11 +1,14 @@
 /* eslint-disable no-unused-vars */
 import bcryptjs from 'bcryptjs'
 import dotenv from 'dotenv'
+import fs from 'fs'
+import handlebars from 'handlebars'
 import jwt from 'jsonwebtoken'
+import path from 'path'
+import { sendEmail } from '~/configs/email'
 import { DEFAULT_AVATAR, DEFAULT_ROLE } from '~/constants/defaultVariables'
 import User from '~/models/user.model'
 import authService from '~/services/auth.service'
-import { sendEmail } from '~/utils/email'
 import { generateAccessToken, generateRefreshToken } from '~/utils/generateToken'
 import { signInValid, signUpValid } from '~/validation/user.validation'
 
@@ -30,10 +33,16 @@ const signUp = async (req, res, next) => {
     // 3. Gửi email xác nhận tài khoản
     const userData = { ...req.body, role: DEFAULT_ROLE }
     const token = jwt.sign(userData, process.env.JWT_ACCOUNT_VERIFY, { expiresIn: '10m' })
-    const message = `Vui lòng xác nhận email của bạn bằng cách nhấn vào đường link sau: ${
+    const confirmationLink = `${
       process.env.BUILD_MODE === 'prod' ? process.env.URL_CLIENT_DEPLOY : process.env.URL_CLIENT
     }/register-success/${token}`
-    await sendEmail(email, 'Xác nhận tài khoản', message)
+
+    const templatePath = path.join(__dirname, '../templates', 'accountConfirmation.hbs')
+    const source = fs.readFileSync(templatePath, 'utf8')
+    const template = handlebars.compile(source)
+    const htmlContent = template({ confirmationLink })
+
+    await sendEmail(email, 'Xác nhận tài khoản', htmlContent)
 
     return res.status(200).json({ message: 'Vui lòng kiểm tra email của bạn để xác nhận tài khoản!' })
   } catch (error) {
@@ -150,7 +159,7 @@ const loginSuccess = async (req, res, next) => {
   try {
     const { userId } = req.body
     if (!userId) {
-      return res.status(400).json({ message: 'Không tìm thấy userId' })
+      return res.status(400).json({ message: 'Không tìm thấy người dùng!' })
     }
     const response = await authService.loginSuccessService(userId, res)
     return res.status(200).json(response)
@@ -172,9 +181,12 @@ const forgotPassword = async (req, res, next) => {
     const hashedPassword = await bcryptjs.hash(newPassword, 10)
     await User.findByIdAndUpdate(user._id, { password: hashedPassword })
 
-    // Gửi email thông báo mật khẩu mới
-    const message = `Mật khẩu mới của bạn là: ${newPassword}`
-    await sendEmail(email, 'Mật khẩu mới', message)
+    const templatePath = path.join(__dirname, '../templates', 'newPassword.hbs')
+    const source = fs.readFileSync(templatePath, 'utf8')
+    const template = handlebars.compile(source)
+    const htmlContent = template({ newPassword })
+
+    await sendEmail(email, 'Mật khẩu mới', htmlContent)
 
     return res.status(200).json({ message: 'Mật khẩu mới đã được gửi vào email của bạn!' })
   } catch (error) {

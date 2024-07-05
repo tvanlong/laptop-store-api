@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 
-export const sendEmail = async (email, subject, text) => {
+export const sendEmail = async (email, subject, htmlContent) => {
   try {
     const transporter = nodemailer.createTransport({
       name: process.env.NAME,
@@ -18,10 +18,9 @@ export const sendEmail = async (email, subject, text) => {
       from: process.env.USER,
       to: email,
       subject: subject,
-      text: text
+      html: htmlContent
     })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
+    throw new Error(error)
   }
 }

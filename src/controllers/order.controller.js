@@ -1,10 +1,15 @@
 import axios from 'axios'
 import CryptoJS from 'crypto-js'
+import fs from 'fs'
+import handlebars from 'handlebars'
 import moment from 'moment'
+import path from 'path'
 import qs from 'qs'
+import { sendEmail } from '~/configs/email'
 import { config } from '~/constants/zalopayConfig'
 import Cart from '~/models/cart.model'
 import Order from '~/models/order.model'
+import User from '~/models/user.model'
 import orderService from '~/services/order.service'
 import { decodeBase64ToJson, encodeJsonToBase64 } from '~/utils/base64Utils'
 import { caculateTotalPrice } from '~/utils/caculateTotalPrice'
@@ -33,8 +38,42 @@ const createOrderCheckout = async (req, res, next) => {
 
     await Cart.deleteOne({ userId: req.params.userId })
 
+    const customer = await User.findById(req.params.userId)
+
+    // Load customer email template
+    const customerTemplatePath = path.join(__dirname, '../templates', 'orderConfirmation.hbs')
+    const customerSource = fs.readFileSync(customerTemplatePath, 'utf8')
+    const customerTemplate = handlebars.compile(customerSource)
+
+    // customer email content
+    const customerEmailContent = customerTemplate({
+      customerName: customer.name,
+      orderId: order._id,
+      totalPrice: total_price,
+      shippingAddress: req.body.shipping_address
+    })
+
+    await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
+
+    // admin email template
+    const adminTemplatePath = path.join(__dirname, '../templates', 'adminOrderNotification.hbs')
+    const adminSource = fs.readFileSync(adminTemplatePath, 'utf8')
+    const adminTemplate = handlebars.compile(adminSource)
+
+    // admin email content
+    const adminEmailContent = adminTemplate({
+      orderId: order._id,
+      totalPrice: total_price,
+      customerName: customer.name,
+      customerEmail: customer.email,
+      shippingAddress: req.body.shipping_address
+    })
+
+    const shopOwnerEmail = process.env.USER
+    await sendEmail(shopOwnerEmail, 'Đơn hàng mới', adminEmailContent)
+
     return res.status(201).json({
-      message: 'Dặt hàng thành công',
+      message: 'Đặt hàng thành công',
       data: order
     })
   } catch (error) {

@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
+import fs from 'fs'
+import handlebars from 'handlebars'
+import path from 'path'
+import { sendEmail } from '~/configs/email'
 import OTPs from '~/models/otp.model'
 import User from '~/models/user.model'
-import { sendEmail } from '~/utils/email'
 import { generateOTP } from '~/utils/generateOtp'
 import { changeEmailValid } from '~/validation/user.validation'
 
 const sendOTPToChangeEmail = async (req, res, next) => {
   try {
-    const { error } = changeEmailValid.validate(req.body, {
-      abortEarly: false
-    })
+    const { error } = changeEmailValid.validate(req.body, { abortEarly: false })
     if (error) {
       const errors = error.details.map((item) => item.message)
       return res.status(400).json({ errors })
@@ -35,8 +36,12 @@ const sendOTPToChangeEmail = async (req, res, next) => {
     const newOTP = new OTPs({ email: new_email, otp })
     await newOTP.save()
 
-    const message = `Mã OTP của bạn là: ${otp}`
-    await sendEmail(new_email, 'Xác nhận thay đổi email', message)
+    const templatePath = path.join(__dirname, '../templates', 'otpConfirmation.hbs')
+    const source = fs.readFileSync(templatePath, 'utf8')
+    const template = handlebars.compile(source)
+    const htmlContent = template({ otp })
+
+    await sendEmail(new_email, 'Xác nhận thay đổi email', htmlContent)
     return res.status(200).json({ message: 'Vui lòng kiểm tra email của bạn để xác nhận thay đổi email!' })
   } catch (error) {
     next(error)

@@ -1,0 +1,31 @@
+<html lang='vi'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Xác nhận đơn hàng</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; } .container {
+      max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px
+      rgba(0, 0, 0, 0.1); } h1 { color: #333; text-align: center; } p { color: #555; } .order-details { margin: 20px 0;
+      } .order-details p { margin: 5px 0; } .order-details strong { color: #000; } .footer { text-align: center;
+      margin-top: 20px; color: #888; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <h1>Đơn hàng của bạn đã được đặt thành công</h1>
+      <p>Xin chào {{customerName}},</p>
+      <p>Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi. Mã đơn hàng của bạn là <strong>{{orderId}}</strong>.</p>
+      <div class='order-details'>
+        <p><strong>Tổng giá trị đơn hàng:</strong> {{totalPrice}} VND</p>
+        <p><strong>Địa chỉ giao hàng:</strong> {{shippingAddress}}</p>
+      </div>
+      <p>Chúng tôi sẽ giao hàng đến bạn trong thời gian sớm nhất.</p>
+      <p>Trân trọng,</p>
+      <p>Đội ngũ cửa hàng</p>
+      <div class='footer'>
+        <p>&copy; 2024 Cửa hàng của chúng tôi. Mọi quyền được bảo lưu.</p>
+      </div>
+    </div>
+  </body>
+</html>
