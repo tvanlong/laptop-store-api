@@ -140,6 +140,15 @@ const deleteSubcategory = async (req, res, next) => {
       return res.status(404).json({ message: 'Không tìm thấy danh mục này' })
     }
 
+    const updatedCategory = await Category.findByIdAndUpdate(
+      subcategory.category,
+      { $pull: { subcategories: subcategory._id } },
+      { new: true }
+    )
+    if (!updatedCategory) {
+      return res.status(400).json({ message: 'Xóa danh mục không thành công' })
+    }
+
     return res.status(200).json({ message: 'Xóa danh mục thành công' })
   } catch (error) {
     next(error)

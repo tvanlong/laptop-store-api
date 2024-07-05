@@ -159,6 +159,13 @@ const deleteProduct = async (req, res, next) => {
       return res.status(404).json({ message: 'Không tìm thấy sản phẩm này' })
     }
 
+    const updatedSubcategory = await Subcategory.findByIdAndUpdate(product.subcategory, {
+      $pull: { products: product._id }
+    })
+    if (!updatedSubcategory) {
+      return res.status(400).json({ message: 'Xóa sản phẩm không thành công!' })
+    }
+
     return res.status(200).json({ message: 'Xóa sản phẩm thành công' })
   } catch (error) {
     next(error)
