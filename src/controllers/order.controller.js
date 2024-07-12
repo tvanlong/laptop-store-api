@@ -133,6 +133,40 @@ const completePaymentWithMomo = async (req, res, next) => {
 
     await Cart.deleteOne({ userId: data.user })
 
+    const customer = await User.findById(data.user)
+
+    // Load customer email template
+    const customerTemplatePath = path.join(__dirname, '../templates', 'orderConfirmation.hbs')
+    const customerSource = fs.readFileSync(customerTemplatePath, 'utf8')
+    const customerTemplate = handlebars.compile(customerSource)
+
+    // customer email content
+    const customerEmailContent = customerTemplate({
+      customerName: customer.name,
+      orderId: responsePayment.orderId,
+      totalPrice: data.total_price,
+      shippingAddress: data.shipping_address
+    })
+
+    await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
+
+    // admin email template
+    const adminTemplatePath = path.join(__dirname, '../templates', 'adminOrderNotification.hbs')
+    const adminSource = fs.readFileSync(adminTemplatePath, 'utf8')
+    const adminTemplate = handlebars.compile(adminSource)
+
+    // admin email content
+    const adminEmailContent = adminTemplate({
+      orderId: responsePayment.orderId,
+      totalPrice: data.total_price,
+      customerName: customer.name,
+      customerEmail: customer.email,
+      shippingAddress: data.shipping_address
+    })
+
+    const shopOwnerEmail = process.env.USER
+    await sendEmail(shopOwnerEmail, 'Đơn hàng mới', adminEmailContent)
+
     return res.status(201).json({ message: 'Thanh toán thành công' })
   } catch (error) {
     next(error)
@@ -263,6 +297,38 @@ const completePaymentWithZaloPay = async (req, res) => {
       })
 
       await Cart.deleteOne({ userId: orderData.user })
+
+      const customer = await User.findById(orderData.user)
+
+      // Load customer email template
+      const customerTemplatePath = path.join(__dirname, '../templates', 'orderConfirmation.hbs')
+      const customerSource = fs.readFileSync(customerTemplatePath, 'utf8')
+      const customerTemplate = handlebars.compile(customerSource)
+
+      // customer email content
+      const customerEmailContent = customerTemplate({
+        customerName: customer.name,
+        orderId: dataJson.app
+      })
+
+      await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
+
+      // admin email template
+      const adminTemplatePath = path.join(__dirname, '../templates', 'adminOrderNotification.hbs')
+      const adminSource = fs.readFileSync(adminTemplatePath, 'utf8')
+      const adminTemplate = handlebars.compile(adminSource)
+
+      // admin email content
+      const adminEmailContent = adminTemplate({
+        orderId: dataJson.app,
+        totalPrice: orderData.total_price,
+        customerName: customer.name,
+        customerEmail: customer.email,
+        shippingAddress: orderData.shipping_address
+      })
+
+      const shopOwnerEmail = process.env.USER
+      await sendEmail(shopOwnerEmail, 'Đơn hàng mới', adminEmailContent)
 
       result.return_code = 1
       result.return_message = 'success'
