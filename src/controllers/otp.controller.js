@@ -36,7 +36,7 @@ const sendOTPToChangeEmail = async (req, res, next) => {
     const newOTP = new OTPs({ email: new_email, otp })
     await newOTP.save()
 
-    const templatePath = path.join(__dirname, '../templates', 'otpConfirmation.hbs')
+    const templatePath = path.resolve(__dirname, '../templates', 'otpConfirmation.hbs')
     const source = fs.readFileSync(templatePath, 'utf8')
     const template = handlebars.compile(source)
     const htmlContent = template({ otp })

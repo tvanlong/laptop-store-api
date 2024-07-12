@@ -37,7 +37,7 @@ const signUp = async (req, res, next) => {
       process.env.BUILD_MODE === 'prod' ? process.env.URL_CLIENT_DEPLOY : process.env.URL_CLIENT
     }/register-success/${token}`
 
-    const templatePath = path.join(__dirname, '../templates', 'accountConfirmation.hbs')
+    const templatePath = path.resolve(__dirname, '../templates', 'accountConfirmation.hbs')
     const source = fs.readFileSync(templatePath, 'utf8')
     const template = handlebars.compile(source)
     const htmlContent = template({ confirmationLink })
@@ -181,7 +181,7 @@ const forgotPassword = async (req, res, next) => {
     const hashedPassword = await bcryptjs.hash(newPassword, 10)
     await User.findByIdAndUpdate(user._id, { password: hashedPassword })
 
-    const templatePath = path.join(__dirname, '../templates', 'newPassword.hbs')
+    const templatePath = path.resolve(__dirname, '../templates', 'newPassword.hbs')
     const source = fs.readFileSync(templatePath, 'utf8')
     const template = handlebars.compile(source)
     const htmlContent = template({ newPassword })

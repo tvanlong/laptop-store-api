@@ -41,7 +41,7 @@ const createOrderCheckout = async (req, res, next) => {
     const customer = await User.findById(req.params.userId)
 
     // Load customer email template
-    const customerTemplatePath = path.join(__dirname, '../templates', 'orderConfirmation.hbs')
+    const customerTemplatePath = path.resolve(__dirname, '../templates', 'orderConfirmation.hbs')
     const customerSource = fs.readFileSync(customerTemplatePath, 'utf8')
     const customerTemplate = handlebars.compile(customerSource)
 
@@ -56,7 +56,7 @@ const createOrderCheckout = async (req, res, next) => {
     await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
 
     // admin email template
-    const adminTemplatePath = path.join(__dirname, '../templates', 'adminOrderNotification.hbs')
+    const adminTemplatePath = path.resolve(__dirname, '../templates', 'adminOrderNotification.hbs')
     const adminSource = fs.readFileSync(adminTemplatePath, 'utf8')
     const adminTemplate = handlebars.compile(adminSource)
 
@@ -136,7 +136,7 @@ const completePaymentWithMomo = async (req, res, next) => {
     const customer = await User.findById(data.user)
 
     // Load customer email template
-    const customerTemplatePath = path.join(__dirname, '../templates', 'orderConfirmation.hbs')
+    const customerTemplatePath = path.resolve(__dirname, '../templates', 'orderConfirmation.hbs')
     const customerSource = fs.readFileSync(customerTemplatePath, 'utf8')
     const customerTemplate = handlebars.compile(customerSource)
 
@@ -151,7 +151,7 @@ const completePaymentWithMomo = async (req, res, next) => {
     await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
 
     // admin email template
-    const adminTemplatePath = path.join(__dirname, '../templates', 'adminOrderNotification.hbs')
+    const adminTemplatePath = path.resolve(__dirname, '../templates', 'adminOrderNotification.hbs')
     const adminSource = fs.readFileSync(adminTemplatePath, 'utf8')
     const adminTemplate = handlebars.compile(adminSource)
 
@@ -301,7 +301,7 @@ const completePaymentWithZaloPay = async (req, res) => {
       const customer = await User.findById(orderData.user)
 
       // Load customer email template
-      const customerTemplatePath = path.join(__dirname, '../templates', 'orderConfirmation.hbs')
+      const customerTemplatePath = path.resolve(__dirname, '../templates', 'orderConfirmation.hbs')
       const customerSource = fs.readFileSync(customerTemplatePath, 'utf8')
       const customerTemplate = handlebars.compile(customerSource)
 
@@ -314,7 +314,7 @@ const completePaymentWithZaloPay = async (req, res) => {
       await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
 
       // admin email template
-      const adminTemplatePath = path.join(__dirname, '../templates', 'adminOrderNotification.hbs')
+      const adminTemplatePath = path.resolve(__dirname, '../templates', 'adminOrderNotification.hbs')
       const adminSource = fs.readFileSync(adminTemplatePath, 'utf8')
       const adminTemplate = handlebars.compile(adminSource)
 
