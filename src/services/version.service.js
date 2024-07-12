@@ -45,7 +45,12 @@ const applyRegexFilters = (filter, ram, memory, screen, cpu, vga) => {
 
   regexFilters.forEach(({ key, field, value }) => {
     if (value) {
-      filter[key] = { $regex: `${field}: ${value}`, $options: 'i' }
+      const regexPattern = field === 'RAM' ? `${field}:\\s*${value}(\\s|$)` : `${field}:.*${value}`
+      if (!filter[key]) {
+        filter[key] = { $regex: regexPattern, $options: 'i' }
+      } else {
+        filter[key].$regex += `.*${regexPattern}`
+      }
     }
   })
 }
