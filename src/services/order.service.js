@@ -26,7 +26,7 @@ const createOptionsSendToMoMoEndpoint = async (extraDataBase64, total_price) => 
   var partnerCode = PARTNER_CODE_MOMO
   var redirectUrl = REDIRECT_URL
   var ipnUrl = IPN_URL
-  var requestType = 'payWithMethod'
+  var requestType = 'captureWallet'
   var amount = total_price
   var orderId = partnerCode + new Date().getTime()
   var requestId = orderId
