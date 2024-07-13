@@ -15,7 +15,8 @@ const orderSchema = new mongoose.Schema(
     ward: { type: String, default: '' },
     shipping_address: { type: String, default: '' },
     status: { type: String, default: 'Chờ xác nhận' },
-    payment_method: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment_methods' }
+    payment_method: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment_methods' },
+    code: { type: String, default: '' }
   },
   {
     timestamps: true,

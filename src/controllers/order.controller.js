@@ -3,6 +3,7 @@ import CryptoJS from 'crypto-js'
 import fs from 'fs'
 import handlebars from 'handlebars'
 import moment from 'moment'
+import * as crypto from 'node:crypto'
 import path from 'path'
 import qs from 'qs'
 import { sendEmail } from '~/configs/email'
@@ -33,7 +34,8 @@ const createOrderCheckout = async (req, res, next) => {
       district: req.body.district,
       ward: req.body.ward,
       shipping_address: req.body.shipping_address,
-      payment_method: req.body.payment_method
+      payment_method: req.body.payment_method,
+      code: crypto.randomBytes(20).toString('hex')
     })
 
     await Cart.deleteOne({ userId: req.params.userId })
@@ -48,7 +50,7 @@ const createOrderCheckout = async (req, res, next) => {
     // customer email content
     const customerEmailContent = customerTemplate({
       customerName: customer.name,
-      orderId: order._id,
+      orderId: order.code,
       totalPrice: total_price,
       shippingAddress: req.body.shipping_address
     })
@@ -62,7 +64,7 @@ const createOrderCheckout = async (req, res, next) => {
 
     // admin email content
     const adminEmailContent = adminTemplate({
-      orderId: order._id,
+      orderId: order.code,
       totalPrice: total_price,
       customerName: customer.name,
       customerEmail: customer.email,
@@ -98,7 +100,8 @@ const createPaymentWithMomo = async (req, res) => {
     district: req.body.district,
     ward: req.body.ward,
     shipping_address: req.body.shipping_address,
-    payment_method: req.body.payment_method
+    payment_method: req.body.payment_method,
+    code: crypto.randomBytes(20).toString('hex')
   })
   const options = await orderService.createOptionsSendToMoMoEndpoint(extraDataBase64, total_price)
 
@@ -128,7 +131,8 @@ const completePaymentWithMomo = async (req, res, next) => {
       district: data.district,
       ward: data.ward,
       shipping_address: data.shipping_address,
-      payment_method: data.payment_method
+      payment_method: data.payment_method,
+      code: data.code
     })
 
     await Cart.deleteOne({ userId: data.user })
@@ -143,7 +147,7 @@ const completePaymentWithMomo = async (req, res, next) => {
     // customer email content
     const customerEmailContent = customerTemplate({
       customerName: customer.name,
-      orderId: order._id,
+      orderId: order.code,
       totalPrice: data.total_price,
       shippingAddress: data.shipping_address
     })
@@ -157,7 +161,7 @@ const completePaymentWithMomo = async (req, res, next) => {
 
     // admin email content
     const adminEmailContent = adminTemplate({
-      orderId: order._id,
+      orderId: order.code,
       totalPrice: data.total_price,
       customerName: customer.name,
       customerEmail: customer.email,
@@ -216,7 +220,8 @@ const createPaymentWithZaloPay = async (req, res) => {
     district: req.body.district,
     ward: req.body.ward,
     shipping_address: req.body.shipping_address,
-    payment_method: req.body.payment_method
+    payment_method: req.body.payment_method,
+    code: crypto.randomBytes(20).toString('hex')
   }
 
   const items = [orderData]
@@ -293,7 +298,8 @@ const completePaymentWithZaloPay = async (req, res) => {
         district: orderData.district,
         ward: orderData.ward,
         shipping_address: orderData.shipping_address,
-        payment_method: orderData.payment_method
+        payment_method: orderData.payment_method,
+        code: orderData.code
       })
 
       await Cart.deleteOne({ userId: orderData.user })
@@ -308,7 +314,7 @@ const completePaymentWithZaloPay = async (req, res) => {
       // customer email content
       const customerEmailContent = customerTemplate({
         customerName: customer.name,
-        orderId: order._id,
+        orderId: order.code,
         totalPrice: orderData.total_price,
         shippingAddress: orderData.shipping_address
       })
@@ -322,7 +328,7 @@ const completePaymentWithZaloPay = async (req, res) => {
 
       // admin email content
       const adminEmailContent = adminTemplate({
-        orderId: order._id,
+        orderId: order.code,
         totalPrice: orderData.total_price,
         customerName: customer.name,
         customerEmail: customer.email,
@@ -419,7 +425,11 @@ const getOrdersByUserId = async (req, res, next) => {
 
 const getAllOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find()
+    const { keyword } = req.query
+
+    const searchCondition = keyword ? { code: { $regex: keyword, $options: 'i' } } : {}
+
+    const orders = await Order.find(searchCondition)
       .populate({
         path: 'user',
         select: 'name email avatar'
@@ -431,7 +441,10 @@ const getAllOrders = async (req, res, next) => {
         },
         options: { withDeleted: true }
       })
-    if (!orders) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
+    }
 
     return res.status(200).json({
       message: 'Lấy thông tin đơn hàng thành công',
