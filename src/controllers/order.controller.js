@@ -120,7 +120,7 @@ const completePaymentWithMomo = async (req, res, next) => {
       return res.status(400).json({ message: 'Thanh toán không thành công' })
     }
 
-    await Order.create({
+    const order = await Order.create({
       user: data.user,
       items: data.items,
       total_price: data.total_price,
@@ -143,7 +143,7 @@ const completePaymentWithMomo = async (req, res, next) => {
     // customer email content
     const customerEmailContent = customerTemplate({
       customerName: customer.name,
-      orderId: responsePayment.orderId,
+      orderId: order._id,
       totalPrice: data.total_price,
       shippingAddress: data.shipping_address
     })
@@ -157,7 +157,7 @@ const completePaymentWithMomo = async (req, res, next) => {
 
     // admin email content
     const adminEmailContent = adminTemplate({
-      orderId: responsePayment.orderId,
+      orderId: order._id,
       totalPrice: data.total_price,
       customerName: customer.name,
       customerEmail: customer.email,
@@ -285,7 +285,7 @@ const completePaymentWithZaloPay = async (req, res) => {
       })
       const orderData = dataJson.item[0]
 
-      await Order.create({
+      const order = await Order.create({
         user: orderData.user,
         items: orderData.items,
         total_price: orderData.total_price,
@@ -308,7 +308,9 @@ const completePaymentWithZaloPay = async (req, res) => {
       // customer email content
       const customerEmailContent = customerTemplate({
         customerName: customer.name,
-        orderId: dataJson.app
+        orderId: order._id,
+        totalPrice: orderData.total_price,
+        shippingAddress: orderData.shipping_address
       })
 
       await sendEmail(customer.email, 'Đặt hàng thành công', customerEmailContent)
@@ -320,7 +322,7 @@ const completePaymentWithZaloPay = async (req, res) => {
 
       // admin email content
       const adminEmailContent = adminTemplate({
-        orderId: dataJson.app,
+        orderId: order._id,
         totalPrice: orderData.total_price,
         customerName: customer.name,
         customerEmail: customer.email,
