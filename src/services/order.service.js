@@ -119,7 +119,20 @@ const createOptionsReceiveTransactionStatus = async (orderId) => {
   return options
 }
 
+const getSortOptions = (sort, order) => {
+  const sortOptions = {}
+  if (sort && order) {
+    if (sort === 'createdAt') {
+      sortOptions[sort] = order === 'new' ? -1 : 1
+    } else if (sort === 'price') {
+      sortOptions['total_price'] = order === 'asc' ? 1 : -1
+    }
+  }
+  return sortOptions
+}
+
 export default {
   createOptionsSendToMoMoEndpoint,
-  createOptionsReceiveTransactionStatus
+  createOptionsReceiveTransactionStatus,
+  getSortOptions
 }

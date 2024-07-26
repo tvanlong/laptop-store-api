@@ -425,9 +425,19 @@ const getOrdersByUserId = async (req, res, next) => {
 
 const getAllOrders = async (req, res, next) => {
   try {
-    const { keyword } = req.query
+    const { keyword, sort, order, status } = req.query
 
-    const searchCondition = keyword ? { code: { $regex: keyword, $options: 'i' } } : {}
+    // Tạo điều kiện tìm kiếm
+    const searchCondition = {}
+    if (status) {
+      searchCondition.status = status
+    }
+    if (keyword) {
+      searchCondition.code = { $regex: keyword, $options: 'i' }
+    }
+
+    // Lấy tùy chọn sắp xếp
+    const sortOptions = orderService.getSortOptions(sort, order)
 
     const orders = await Order.find(searchCondition)
       .populate({
@@ -441,6 +451,7 @@ const getAllOrders = async (req, res, next) => {
         },
         options: { withDeleted: true }
       })
+      .sort(sortOptions)
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
